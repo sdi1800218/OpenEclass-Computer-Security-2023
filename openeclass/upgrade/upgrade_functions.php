@@ -213,6 +213,7 @@ function update_assignment_submit()
 
 
 // checks if admin user
+/*
 function is_admin($username, $password, $mysqlMainDb) {
 
 	mysql_select_db($mysqlMainDb);
@@ -228,6 +229,29 @@ function is_admin($username, $password, $mysqlMainDb) {
 		return TRUE;
 	}
 }
+*/
+function is_admin($username, $password, $mysqlMainDb) {
+
+        // 1. Establish connection and prepare statement
+        $con = mysqli_connect("localhost", "my_user", "my_password", $mysqlMainDb);
+        $stmt = mysqli_prepare($con, "SELECT * FROM user, admin 
+                WHERE admin.idUser = user.user_id AND user.username = ? AND user.password = ?");
+
+        // 2. Bind params and execute
+        mysqli_stmt_bind_param($stmt, "ss", $username, $password);
+        mysqli_stmt_execute($stmt);
+
+        // 3. Logiiic
+        $result = mysqli_stmt_get_result($stmt);
+        if (!$result or mysqli_num_rows($result) == 0) {
+            return FALSE;
+        } else {
+            $row = mysqli_fetch_array($result);
+            $_SESSION['uid'] = $row['user_id'];
+            return TRUE;
+        }
+    }
+    
 
 // Check whether an entry with the specified $define_var exists in the accueil table
 function accueil_tool_missing($define_var) {
