@@ -294,7 +294,7 @@ hContent;
     $tool_content .= "
       <div id='operations_container'>
         <ul id='opslist'>
-          <li><a href='" . $_SERVER['PHP_SELF'] . "?addAnnouce=1'>" . $langAddAnn . "</a></li>";
+          <li><a href='" . htmlspecialchars($_SERVER['PHP_SELF']) . "?addAnnouce=1'>" . $langAddAnn . "</a></li>";
 
     if ($announcementNumber > 1 || isset($_POST['submitAnnouncement'])) {
         $tool_content .= "
@@ -311,7 +311,7 @@ hContent;
     if ($displayForm and
         (isset($_GET['addAnnouce']) or isset($_GET['modify']))) {
         // DISPLAY ADD ANNOUNCEMENT COMMAND
-        $tool_content .= "<form method='post' action='$_SERVER[PHP_SELF]' onsubmit=\"return checkrequired(this, 'antitle');\">";
+        $tool_content .= "<form method='post' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "' onsubmit=\"return checkrequired(this, 'antitle');\">";
         // should not send email if updating old message
         if (isset ($modify) && $modify) {
             $tool_content .= "

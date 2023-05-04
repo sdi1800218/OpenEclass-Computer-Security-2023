@@ -184,7 +184,10 @@ if ($displayAnnouncementList == true) {
         if (@$addAnnouce != 1) {
                 $tool_content .= "<div id='operations_container'>
                 <ul id='opslist'><li>";
-                $tool_content .= "<a href='".$_SERVER['PHP_SELF']."?addAnnouce=1&amp;localize=$localize'>".$langAdminAddAnn."</a>";
+                $tool_content .= "<a href="
+                                .htmlspecialchars($_SERVER['PHP_SELF'])
+                                ."?addAnnouce=1&amp;localize=$localize>"
+                                .$langAdminAddAnn."</a>";
                 $tool_content .= "</li></ul></div>";
         }
         if ($announcementNumber > 0) {

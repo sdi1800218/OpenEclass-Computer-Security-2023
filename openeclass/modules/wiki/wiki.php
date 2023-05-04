@@ -442,7 +442,7 @@ function confirmation (name)
               <div id="operations_container">
                 <ul id="opslist">
                   <li><a href="'
-                    . $_SERVER['PHP_SELF']
+                    . htmlspecialchars($_SERVER['PHP_SELF'])
                     . '?action=rqEdit'
                     . '">'
                     . $langWikiCreateNewWiki
@@ -576,7 +576,7 @@ function confirmation (name)
                         // edit link
 
                         $tool_content .= '          <td style="text-align: center;">';
-                        $tool_content .= '<a href="'.$_SERVER['PHP_SELF'].'?wikiId='
+                        $tool_content .= '<a href="' . htmlspecialchars($_SERVER['PHP_SELF']) . '?wikiId='
                             . $entry['id'].'&amp;action=rqEdit'
                             . '">'
                             . '<img src="'.$imgRepositoryWeb.'/edit.gif" border="0" alt="'.$langWikiEditProperties.'" title="'.$langWikiEditProperties.'" />'
@@ -588,7 +588,7 @@ function confirmation (name)
                         // delete link
 
                         $tool_content .= '<td style="text-align: center;">';
-                        $tool_content .= '<a href="'.$_SERVER['PHP_SELF'].'?wikiId='
+                        $tool_content .= '<a href="' . htmlspecialchars($_SERVER['PHP_SELF']) . '?wikiId='
                             . $entry['id'].'&amp;action=exDelete'
                             . '">'
                             . '<img src="'.$imgRepositoryWeb.'/delete.gif" border="0" alt="'.$langDelete.'" title="'.$langDelete.'" onClick="return confirmation();"/>'
@@ -613,7 +613,7 @@ function confirmation (name)
         }
         default:
         {
-            trigger_error( "Invalid action supplied to " . $_SERVER['PHP_SELF']
+            trigger_error( "Invalid action supplied to " . htmlspecialchars($_SERVER['PHP_SELF'])
                 , E_USER_ERROR
                 );
         }

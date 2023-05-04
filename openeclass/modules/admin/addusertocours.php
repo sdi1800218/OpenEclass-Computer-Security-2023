@@ -138,7 +138,14 @@ function reverseAll(cbList) {
 
 </script>';
 
-	$tool_content .= "<form action=".$_SERVER['PHP_SELF']."?c=".htmlspecialchars($_GET['c'])."".$searchurl." method='post'>";
+	$tool_content .= "<form action="
+					.htmlspecialchars($_SERVER['PHP_SELF']) 
+					."?c="
+					.htmlspecialchars($_GET['c'])
+					.""
+					.$searchurl
+					." method='post'>";
+
 	$tool_content .= "<table class='FormData' width='99%' align='left'><tbody>
                           <tr><th colspan='3'>".$langFormUserManage."</th></tr>
                           <tr><th align=left>".$langListNotRegisteredUsers."<br />

@@ -167,7 +167,7 @@ elseif ($a == 1)  {
 			}
 	} else {
 		// Display form for new faculte information
-		$tool_content .= "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."?a=1\">";
+		$tool_content .= '<form method="post" action="' . htmlspecialchars($_SERVER['PHP_SELF'] . '?a=1') . '">';
 		$tool_content .= "<table width='99%' class='FormData'>
 		<tbody><tr>
 		<th width=\"220\">&nbsp;</th>

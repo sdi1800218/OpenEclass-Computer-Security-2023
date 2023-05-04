@@ -129,7 +129,7 @@ if (isset($_POST['submit'])) {
                 db_query("UPDATE `$currentCourseID`.accueil SET rubrique='$langCourseUnits' WHERE define_var='MODULE_ID_UNITS'");
 
                 $tool_content .= "<p class='success_small'>$langModifDone<br />
-                        <a href='".$_SERVER['PHP_SELF']."'>$langBack</a></p><br />
+                        <a href='" . htmlspecialchars($_SERVER['PHP_SELF']) . "'>$langBack</a></p><br />
                         <p><a href='{$urlServer}courses/$currentCourseID/index.php'>$langBackCourse</a></p><br />";
         }
 } else {
@@ -163,7 +163,7 @@ if (isset($_POST['submit'])) {
 		$checkpasssel = empty($password)? '': " checked='1'";
 
 		@$tool_content .="
-		<form method='post' action='$_SERVER[PHP_SELF]'>
+		<form method='post' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "'>
 		<table width='99%' align='left'>
 		<thead><tr>
 		<td>

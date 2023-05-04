@@ -276,9 +276,9 @@ function confirmation (name)
 
 	if (isset($_GET['addEvent']) or isset($_GET['edit'])) {
 		$nameTools = $langAddEvent;
-		$navigation[] = array ("url" => $_SERVER['PHP_SELF'], "name" => $langAgenda);
+		$navigation[] = array ("url" => htmlspecialchars($_SERVER['PHP_SELF']), "name" => $langAgenda);
 		$tool_content .= "
-<form method='post' action='$_SERVER[PHP_SELF]' onsubmit='return checkrequired(this, \"titre\");'>
+<form method='post' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "' onsubmit='return checkrequired(this, \"titre\");'>
     <input type='hidden' name='id' value='$id' />
     <table width='99%' class='FormData'>
     <tbody>

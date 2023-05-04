@@ -48,9 +48,9 @@ eMail: eclassadmin@gunet.gr
 function make_clickable($text)
 {
 
-        // If the user has decided to deeply use html and manage himself
-        // hyperlink cancel the make clickable() function and return the text
-        // untouched.
+	// If the user has decided to deeply use html and manage himself
+	// hyperlink cancel the make clickable() function and return the text
+	// untouched.
 
 	if (preg_match ( "<(a|img)[[:space:]]*(href|src)[[:space:]]*=(.*)>", $text) )
 	{

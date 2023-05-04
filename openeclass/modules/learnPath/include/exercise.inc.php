@@ -85,7 +85,7 @@ if( isset($learningPath_module['lock'])
 	&& $learningPath_module['lock'] == 'CLOSE'
 	&& isset($learningPath_module['raw_to_pass']) )
 {
-	$tool_content .= '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">'."\n"
+	$tool_content .= '<form method="POST" action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '">'."\n"
 		.'<label for="newRaw">'.$langChangeRaw.'</label>'."\n"
 		.'<input type="text" value="'.htmlspecialchars( $learningPath_module['raw_to_pass'] ).'" name="newRaw" id="newRaw" size="3" maxlength="3" /> % '."\n"
 		.'<input type="hidden" name="cmd" value="raw" />'."\n"

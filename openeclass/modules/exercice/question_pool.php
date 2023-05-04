@@ -107,7 +107,7 @@ if($is_adminOfCourse) {
 	
 	$tool_content .= "</li></ul></div>";
 
-	$tool_content .= "<form method='get' action='$_SERVER[PHP_SELF]'>";
+	$tool_content .= "<form method='get' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "'>";
 	if (isset($fromExercise)) {
 		$tool_content .= "<input type='hidden' name='fromExercise' value='$fromExercise'>";
 	}
@@ -205,13 +205,13 @@ if($is_adminOfCourse) {
 				<img src='../../template/classic/img/arrow_grey.gif' border='0'></div></td>
 				<td><a href=\"admin.php?editQuestion=".$row['id']."&fromExercise=".$fromExercise."\">".$row['question']."</a><br/><small class='invisible'>".$answerType."</small></td>
 				<td class='center'><div align='center'>";
-				$tool_content .= "<a href=\"".$_SERVER['PHP_SELF']."?recup=".$row['id'].
+				$tool_content .= "<a href=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "?recup=".$row['id'].
 					"&fromExercise=".$fromExercise."\"><img src='../../template/classic/img/enroll.gif' border='0' title='$langReuse'></a>";
 			}
 			$tool_content .= "</td>";	
 			if(!isset($fromExercise)) {
 				$tool_content .= "<td><div align='center'>
-					<a href=\"".$_SERVER['PHP_SELF']."?exerciseId=".$exerciseId."&delete=".$row['id']."\"". 
+					<a href=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "?exerciseId=".$exerciseId."&delete=".$row['id']."\"". 
 					" onclick=\"javascript:if(!confirm('".addslashes(htmlspecialchars($langConfirmYourChoice)).
 					"')) return false;\"><img src='../../template/classic/img/delete.gif' border='0' title='$langDelete'></a></div></td>";
 			}
@@ -245,7 +245,7 @@ if($is_adminOfCourse) {
 		if ($page > 0) {
 			$prevpage = $page-1;
 			if (isset($fromExercise)) {
-				$tool_content .= "<small>&lt;&lt; <a href=\"".$_SERVER['PHP_SELF'].
+				$tool_content .= "<small>&lt;&lt; <a href=\"".htmlspecialchars($_SERVER['PHP_SELF']).
 				"?exerciseId=".$exerciseId.
 				"&fromExercise=".$fromExercise.
 				"&page=".$prevpage."\">".$langPreviousPage."</a></small>";
@@ -257,7 +257,7 @@ if($is_adminOfCourse) {
 		if ($page < $numpages) {
 			$nextpage = $page+1;
 			if (isset($fromExercise)) {
-				$tool_content .= "<small><a href='".$_SERVER['PHP_SELF'].
+				$tool_content .= "<small><a href='".htmlspecialchars($_SERVER['PHP_SELF']).
 				"?exerciseId=".$exerciseId.
 				"&fromExercise=".$fromExercise.
 				"&page=".$nextpage."'>".$langNextPage.

@@ -45,8 +45,9 @@ $tool_content = "";
 
 // Main body
 $tool_content .= "
-<div class='warntitle'>$langWarnUpgrade</div><p>$langExplUpgrade</p>
-<p>$langExpl2Upgrade</p>";
+<div class='warntitle'>" . htmlspecialchars($langWarnUpgrade, ENT_QUOTES, 'UTF-8') . "</div>
+<p>" . htmlspecialchars($langExplUpgrade, ENT_QUOTES, 'UTF-8') . "</p>
+<p>" . htmlspecialchars($langExpl2Upgrade, ENT_QUOTES, 'UTF-8') . "</p>";
 set_time_limit(0);
 $max_execution_time = ini_get('max_execution_time');
 if ($max_execution_time != 0 and $max_execution_time < 300) {

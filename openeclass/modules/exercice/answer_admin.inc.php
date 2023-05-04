@@ -561,7 +561,7 @@ cData;
 		{
 
     $tool_content .= "
-      <form name=\"formulaire\" method=\"post\" action=\"".$_SERVER['PHP_SELF']."?modifyAnswers=".$modifyAnswers."\">\n";
+      <form name=\"formulaire\" method=\"post\" action=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "?modifyAnswers=".$modifyAnswers."\">\n";
 if(!isset($setWeighting))
 	$tempSW = "";
 else

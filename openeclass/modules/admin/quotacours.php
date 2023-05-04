@@ -107,7 +107,7 @@ else {
 	$drq = $q['dropbox_quota'] / 1000000;
 	// Constract the edit form
 	$tool_content .= "
-<form action=".$_SERVER['PHP_SELF']."?c=".htmlspecialchars($_GET['c'])."".$searchurl." method=\"post\">
+<form action=" . htmlspecialchars($_SERVER['PHP_SELF']) . "?c=".htmlspecialchars($_GET['c'])."".$searchurl." method=\"post\">
   <table class=\"FormData\" width=\"99%\" align=\"left\">
   <tbody>
   <tr>

@@ -32,7 +32,7 @@ Defines standard functions and validates variables
 ---------------------------------------------------------------------
 */
 
-define('ECLASS_VERSION', '2.3');
+define('ECLASS_VERSION', '45.1');
 
 // Show query string and then do MySQL query
 function db_query2($sql, $db = FALSE)
@@ -67,26 +67,25 @@ function db_query($sql, $db = FALSE) {
 
 
 // Check if a string looks like a valid email address
-function email_seems_valid($email)
-{
-        return (preg_match('#^[0-9a-z_\.\+-]+@([0-9a-z][0-9a-z-]*[0-9a-z]\.)+[a-z]{2,}$#i', $email)
-                and !preg_match('#@.*--#', $email));
+function email_is_valid($email) {
+    return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
 }
 
 // Eclass SQL query wrapper returning only a single result value.
 // Useful in some cases because, it avoid nested arrays of results.
-function db_query_get_single_value($sqlQuery, $db = FALSE) {
-	$result = db_query($sqlQuery, $db);
-
-	if ($result) {
-		list($value) = mysql_fetch_row($result);
-		mysql_free_result($result);
-		return $value;
-	}
-	else {
-		return false;
-	}
+function db_query_get_single_value($sql, $db = false) {
+    global $conn;
+    if ($db) {
+        mysqli_select_db($conn, $db);
+    }
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_bind_result($stmt, $value);
+    mysqli_stmt_fetch($stmt);
+    mysqli_stmt_close($stmt);
+    return $value;
 }
+
 
 // Claroline SQL query wrapper returning only the first row of the result
 // Useful in some cases because, it avoid nested arrays of results.
@@ -159,6 +158,7 @@ function autounquote($s) {
 }
 
 // Shortcut for htmlspecialchars()
+// TODO: WTF
 function q($s)
 {
 	return htmlspecialchars($s, ENT_QUOTES);
@@ -796,9 +796,9 @@ function make_clickable_path($dbTable, $path)
 	global $langRoot, $userGroupId;
 
         if (isset($userGroupId)) {
-                $base = $_SERVER['PHP_SELF'] . '?userGroupId=' . $userGroupId . '&amp;';
+                $base = htmlspecialchars($_SERVER['PHP_SELF']) . '?userGroupId=' . $userGroupId . '&amp;';
         } else {
-                $base = $_SERVER['PHP_SELF'] . '?';
+                $base = htmlspecialchars($_SERVER['PHP_SELF']) . '?';
         }
 
 	$cur = '';
@@ -887,17 +887,23 @@ function mkpath($path)  {
 	}
 }
 
-
 // checks if a module is visible
 function display_activation_link($module_id) {
 
 	global $currentCourseID;
 
+	// 1. Sanitize the user input
+	$module_id = intval($module_id);
+
 	$v = mysql_fetch_array(db_query("SELECT lien FROM accueil
 		WHERE id ='$module_id'", $currentCourseID));
 	$newlien = str_replace("../..","","$v[lien]");
 
-	if (strpos($_SERVER['PHP_SELF'],$newlien) === FALSE) {
+
+	// 2. Encode the output variable to prevent XSS
+	$output = htmlspecialchars($_SERVER['PHP_SELF'] . $newlien, ENT_QUOTES, 'UTF-8');
+
+	if (strpos($_SERVER['PHP_SELF'], $output) === FALSE) {
 		return FALSE;
 	} else {
 		return TRUE;

@@ -142,7 +142,7 @@ if (isset($_POST["submit"])) {
 		$numofcourses = getdepnumcourses($fc);
 		// display all the facultes collapsed
 		$tool_content .= collapsed_facultes_horiz($fc);
-		$tool_content .= "\n    <form action='$_SERVER[PHP_SELF]' method='post'>";
+		$tool_content .= "\n    <form action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "' method='post'>";
 		if ($numofcourses > 0) {
 			$tool_content .= expanded_faculte($fac, $fc, $uid);
 			$tool_content .= "
@@ -405,7 +405,7 @@ function collapsed_facultes_horiz($fc) {
 
 	global $langListFac, $langSelectFac;
 
-	$retString = "\n   <form name='depform' action='$_SERVER[PHP_SELF]' method='get'>\n";
+	$retString = "\n   <form name='depform' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "' method='get'>\n";
 
 	$retString .= "\n  <div id='operations_container'>\n    <ul id='opslist'>";
 	$retString .=  "\n    <li>$langSelectFac:&nbsp;";

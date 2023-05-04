@@ -364,13 +364,16 @@ else
 	$tool_content .=  "<td>&nbsp;</td>";
 }
 
-/*----------------------------------------
+/*
+----------------------------------------
 UPLOAD SECTION
---------------------------------------*/
+--------------------------------------
+*/
 
+/* TODO
 if(isset($uploadPath)) {
 	$tool_content .= <<<cData
-	<form action='$_SERVER[PHP_SELF]' method='post' enctype='multipart/form-data'>
+	<form action='htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES)' method='post' enctype='multipart/form-data'>
 	<input type='hidden' name='userGroupId' value='$userGroupId' />
 	<input type='hidden' name='uploadPath' value='$curDirPath' />
 	<table class='FormData' width='99%'>
@@ -387,6 +390,40 @@ cData;
         $tool_content .= "<p align='right'><small>$langMaxFileSize " .
                          ini_get('upload_max_filesize') . "</small></p>";
 }
+*/
+
+if (isset($uploadPath)) {
+    // Sanitize user input
+    $userGroupIdSanitized = htmlspecialchars($userGroupId, ENT_QUOTES);
+    $curDirPathSanitized = htmlspecialchars($curDirPath, ENT_QUOTES);
+
+    // Define the form tag with properly concatenated action attribute
+    $formTag = '<form action="' . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . '" method="post" enctype="multipart/form-data">';
+
+    // Define the table
+    $table = '<table class="FormData" width="99%">
+    <thead>
+    <tr>
+      <th class="left" width="220">' . $langDownloadFile . ':</th>
+      <td class="left" width="1"><input type="file" name="userFile"></td>
+      <td class="left"><input type="submit" value="' . $langUpload . '" /></td>
+    </tr>
+    </thead>
+    </table>';
+
+    // Combine the form tag, hidden inputs, table, and closing tag
+    $tool_content .= <<<cData
+    $formTag
+    <input type="hidden" name="userGroupId" value="$userGroupIdSanitized" />
+    <input type="hidden" name="uploadPath" value="$curDirPathSanitized" />
+    $table
+    </form>
+cData;
+
+    // Add a message about the maximum file size
+    $tool_content .= '<p align="right"><small>' . $langMaxFileSize . ' ' . ini_get('upload_max_filesize') . '</small></p>';
+}
+
 
 /*------------------------------------
 CURRENT DIRECTORY LINE

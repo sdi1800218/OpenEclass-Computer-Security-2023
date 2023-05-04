@@ -121,7 +121,7 @@ if ($is_adminOfCourse) {
                         }
                 }
 
-                $tool_content .= "<form method='post' action='$_SERVER[PHP_SELF]'>
+                $tool_content .= "<form method='post' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "'>
                         <input type='hidden' name='edIdBloc' value='$numBloc' />
                         <table width='99%' class='FormData' align='left'><tbody>
                            <tr><th class='left' width='220'>$langTitle:</th>
@@ -152,7 +152,7 @@ if ($is_adminOfCourse) {
                         $contentBloc[$bloc["id"]] = $bloc["content"];
                 }
                 $tool_content .= "
-    <form method='post' action='$_SERVER[PHP_SELF]'>
+    <form method='post' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "'>
 
     <table width='99%' align='left' class='FormData'>
     <tbody>
@@ -182,7 +182,7 @@ if ($is_adminOfCourse) {
         				<thead><tr>
           				<th class='left' style='border: 1px solid #CAC3B5;'>".$titreBloc[$numBloc].":</th>
           				<td width='50' class='right'>
-					<a href='".$_SERVER['PHP_SELF']."?numBloc=".$numBloc."' >
+					<a href='" . htmlspecialchars($_SERVER['PHP_SELF']) . "?numBloc=".$numBloc."' >
 					<img src='../../template/classic/img/edit.gif' border='0' title='$langModify' /></a>&nbsp;&nbsp;";
 					$tool_content .= "<a href='$_SERVER[PHP_SELF]?delete=yes&amp;numBloc=$numBloc' onClick='return confirmation();'><img src='../../images/delete.gif' border='0' title='$langDelete' /></a>&nbsp;</td></tr></thead></table>
       					</td></tr><tr>

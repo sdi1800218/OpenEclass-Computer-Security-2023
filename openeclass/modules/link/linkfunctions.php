@@ -282,11 +282,11 @@ function showlinksofcategory($catid)
                         $tool_content .=  "
                                 <td width='45' align='right'>";
                         if (isset($category))
-                                $tool_content .=  "<a href=\"$_SERVER[PHP_SELF]?action=editlink&amp;category=$category&amp;id=$myrow[0]&amp;urlview=$urlview\">";
+                                $tool_content .=  "<a href=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "?action=editlink&amp;category=$category&amp;id=$myrow[0]&amp;urlview=$urlview\">";
                         else
                                 $tool_content .=  "<a href=\"$_SERVER[PHP_SELF]?action=editlink&amp;id=$myrow[0]&amp;urlview=$urlview\">";
 
-                        $tool_content .=  "<img src=\"../../template/classic/img/edit.gif\" title=\"".$langModify."\" /></a>&nbsp;&nbsp;<a href=\"".$_SERVER['PHP_SELF']."?action=deletelink&amp;id=".$myrow[0]."&amp;urlview=".$urlview."\" onclick=\"javascript:if(!confirm('".$langLinkDelconfirm."')) return false;\"><img src=\"../../template/classic/img/delete.gif\" title=\"".$langDelete."\" /></a>
+                        $tool_content .=  "<img src=\"../../template/classic/img/edit.gif\" title=\"".$langModify."\" /></a>&nbsp;&nbsp;<a href=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "?action=deletelink&amp;id=".$myrow[0]."&amp;urlview=".$urlview."\" onclick=\"javascript:if(!confirm('".$langLinkDelconfirm."')) return false;\"><img src=\"../../template/classic/img/delete.gif\" title=\"".$langDelete."\" /></a>
                                 </td>
                                 <td width='45' align='right'>";
                         // DISPLAY MOVE UP COMMAND only if it is not the top link
@@ -324,7 +324,11 @@ function showcategoryadmintools($categoryid)
 	global $tool_content;
 
 	$tool_content .=  "
-      <td width='45' align='right'><a href=\"$_SERVER[PHP_SELF]?action=editcategory&amp;id=$categoryid&amp;urlview=$urlview\"><img src=\"../../template/classic/img/edit.gif\" title=\"".$langModify."\" /></a>&nbsp;&nbsp;<a href=\"".$_SERVER['PHP_SELF']."?action=deletecategory&amp;id=".$categoryid."&amp;urlview=".$urlview."\" onclick=\"javascript:if(!confirm('".$langCatDel."')) return false;\">". "<img src=\"../../template/classic/img/delete.gif\" title=\"".$langDelete."\" /></a>
+      <td width='45' align='right'><a href=\"$_SERVER[PHP_SELF]?action=editcategory&amp;id=$categoryid&amp;urlview=$urlview\"><img src=\"../../template/classic/img/edit.gif\" title=\""
+	  .$langModify."\" /></a>&nbsp;&nbsp;<a href=\"" . htmlspecialchars($_SERVER['PHP_SELF'])
+	  . "?action=deletecategory&amp;id=".$categoryid."&amp;urlview=".$urlview
+	  ."\" onclick=\"javascript:if(!confirm('".$langCatDel."')) return false;\">"
+	  . "<img src=\"../../template/classic/img/delete.gif\" title=\"".$langDelete."\" /></a>
       </td>";
 
 

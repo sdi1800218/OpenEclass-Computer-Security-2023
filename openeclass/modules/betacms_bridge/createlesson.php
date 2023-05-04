@@ -85,7 +85,7 @@ draw($tool_content,3);
 // HELPER FUNCTIONS
 
 function repoForm() {
-	return "<form action='$_SERVER[PHP_SELF]' method='post'>
+	return "<form action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "' method='post'>
 	<table width='99%' align='left' class='FormData'>
 	<tbody><tr>
 	<th width='220'>&nbsp;</th>

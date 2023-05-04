@@ -40,7 +40,7 @@ function confirmation() {
 }
 </script>';
 
-$basetoolurl = $_SERVER['PHP_SELF'];
+$basetoolurl = htmlspecialchars($_SERVER['PHP_SELF']);
 if (isset($_GET['type']) and $_GET['type'] == 'user') {
         $list_statut = 5;
         $nameTools = $langUserOpenRequests;
@@ -276,7 +276,7 @@ $langEmail: $emailhelpdesk";
 				FROM prof_request WHERE rid = '$id'");
 			$d = mysql_fetch_assoc($r);
                         $warning = ($d['statut'] == 5)? $langWarnReject: $langGoingRejectRequest;
-			$tool_content .= "<form action='$_SERVER[PHP_SELF]' method='post'>
+			$tool_content .= "<form action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "' method='post'>
 			<table width='99%' class='FormData'>
 			<tbody><tr>
 			<th width='220'>&nbsp;</th>

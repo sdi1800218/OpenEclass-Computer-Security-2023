@@ -683,7 +683,7 @@ if (mysql_num_rows($sql) == 0) {
                         $this_reverse = $reverse;
                         $indicator = '';
                 }
-                return '<a href=\'' . $_SERVER['PHP_SELF'] . '?openDir=' . $path .
+                return '<a href=\'' . htmlspecialchars($_SERVER['PHP_SELF']) . '?openDir=' . $path .
                        '&amp;sort=' . $this_sort . ($this_reverse? '&amp;rev=1': '') .
                        '\'>' . $label . $indicator . '</a>';
         }
@@ -691,7 +691,7 @@ if (mysql_num_rows($sql) == 0) {
 	/*** go to parent directory ***/
         if ($curDirName) // if the $curDirName is empty, we're in the root point and we can't go to a parent dir
         {
-                $parentlink = $_SERVER['PHP_SELF'] . '?openDir=' . $cmdParentDir;
+                $parentlink = htmlspecialchars($_SERVER['PHP_SELF']) . '?openDir=' . $cmdParentDir;
                 $tool_content .=  "<a href='$parentlink'>$langUp</a> <a href='$parentlink'><img src='../../template/classic/img/parent.gif' height='20' width='20' /></a>";
         }
         $tool_content .= "</div></th>";

@@ -85,7 +85,7 @@ if((!empty($u)) && ctype_digit($u) )	// validate the user id
     </ul>
   </div>";
 		$tool_content .= "
-<form name='edituser' method='post' action='$_SERVER[PHP_SELF]'>
+<form name='edituser' method='post' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "'>
   <table class='FormData' width='99%' align='left'>
   <tbody>
   <tr>

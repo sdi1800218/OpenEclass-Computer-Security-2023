@@ -634,7 +634,7 @@
         <ul id="opslist">' . "\n";
     $tool_content .= '          <li>'
         . '<img src="'.$imgRepositoryWeb.'/wiki.gif" border="0" align="absmiddle" />&nbsp;<a class="claroCmd" href="'
-        . $_SERVER['PHP_SELF']
+        . htmlspecialchars($_SERVER['PHP_SELF'])
         . '?wikiId=' . $wiki->getWikiId()
         . '&amp;action=show'
         . '&amp;title=__MainPage__'
@@ -643,7 +643,7 @@
         ;
     $tool_content .= '          <li>'
         . '<img src="'.$imgRepositoryWeb.'/history.gif" border="0" align="absmiddle" />&nbsp;<a class="claroCmd" href="'
-        . $_SERVER['PHP_SELF']
+        . htmlspecialchars($_SERVER['PHP_SELF'])
         . '?wikiId=' . $wiki->getWikiId()
         . '&amp;action=recent'
         . '">'
@@ -652,7 +652,7 @@
 
     $tool_content .= '          <li>'
         . '<img src="'.$imgRepositoryWeb.'/book.gif" border="0" align="absmiddle" />&nbsp;<a class="claroCmd" href="'
-        . $_SERVER['PHP_SELF']
+        . htmlspecialchars($_SERVER['PHP_SELF'])
         . '?wikiId=' . $wiki->getWikiId()
         . '&amp;action=all">'
         . $langWikiAllPages.'</a></li>' . "\n"
@@ -678,7 +678,7 @@
         $tool_content .= ''
             . '<img src="'.$imgRepositoryWeb.'/back.gif" border="0" align="absmiddle" />&nbsp;'
             . '<a class="claroCmd" href="'
-            . $_SERVER['PHP_SELF']
+            . htmlspecialchars($_SERVER['PHP_SELF'])
             . '?wikiId=' . $wiki->getWikiId()
             . '&amp;action=show'
             . '&amp;title=' . rawurlencode($title)
@@ -701,7 +701,7 @@
             $tool_content .= '&nbsp;&nbsp;&nbsp;'
                 . '<img src="'.$imgRepositoryWeb.'/edit.gif" border="0" align="absmiddle" />&nbsp;'
                 . '<a class="claroCmd" href="'
-                . $_SERVER['PHP_SELF']
+                . htmlspecialchars($_SERVER['PHP_SELF'])
                 . '?wikiId=' . $wiki->getWikiId()
                 . '&amp;action=edit'
                 . '&amp;title=' . rawurlencode( $title )
@@ -733,7 +733,7 @@
         $tool_content .= '&nbsp;&nbsp;&nbsp;'
                 . '<img src="'.$imgRepositoryWeb.'/version.gif" border="0" align="absmiddle" />&nbsp;'
                 . '<a class="claroCmd" href="'
-                . $_SERVER['PHP_SELF']
+                . htmlspecialchars($_SERVER['PHP_SELF'])
                 . '?wikiId=' . $wiki->getWikiId()
                 . '&amp;action=history'
                 . '&amp;title=' . rawurlencode( $title )
@@ -790,7 +790,7 @@
             $tool_content .= '</div>' . "\n";
             $message = $langWikiConflictHowTo;
             $tool_content .= disp_message_box ( $message ) . '<br />' . "\n";
-            $tool_content .= '<form id="editConflict" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+            $tool_content .= '<form id="editConflict" action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '" method="POST">';
             $tool_content .= '<textarea name="conflictContent" id="wiki_content"'
                  . ' cols="80" rows="15" wrap="virtual">'
                  ;
@@ -800,7 +800,7 @@
             $tool_content .= '<input type="hidden" name="wikiId" value="'.$wikiId.'" />' . "\n";
             $tool_content .= '<input type="hidden" name="title" value="'.$title.'" />' . "\n";
             $tool_content .= '<input type="submit" name="action[edit]" value="'.$langWikiEditLastVersion.'" />' . "\n";
-            $url = $_SERVER['PHP_SELF']
+            $url = htmlspecialchars($_SERVER['PHP_SELF'])
                 . '?wikiId=' . $wikiId
                 . '&amp;title=' . $title
                 . '&amp;action=show'
@@ -884,7 +884,7 @@
                         : $recentChange['title']
                         ;
 
-                    $entry = '<strong><a href="'.$_SERVER['PHP_SELF'].'?wikiId='
+                    $entry = '<strong><a href="' . htmlspecialchars($_SERVER['PHP_SELF']) . '?wikiId='
                         . $wikiId . '&amp;title=' . rawurlencode( $recentChange['title'] )
                         . '&amp;action=show"'
                         . '>'.$pgtitle.'</a></strong>'
@@ -914,7 +914,7 @@
         {
             // handle main page
 
-            $tool_content .= '<ul><li><a href="'.$_SERVER['PHP_SELF']
+            $tool_content .= '<ul><li><a href="'.htmlspecialchars($_SERVER['PHP_SELF'])
                 . '?wikiId=' . $wikiId
                 . '&amp;title=' . rawurlencode("__MainPage__")
                 . '&amp;action=show">'
@@ -938,7 +938,7 @@
 
                     $pgtitle = rawurlencode( $page['title'] );
 
-                    $link = '<a href="'.$_SERVER['PHP_SELF'].'?wikiId='
+                    $link = '<a href="' . htmlspecialchars($_SERVER['PHP_SELF']) . '?wikiId='
                         . $wikiId . '&amp;title=' . $pgtitle . '&amp;action=show"'
                         . '>' . $page['title'] . '</a>'
                         ;
@@ -962,7 +962,7 @@
             }
             else
             {
-                $script = $_SERVER['PHP_SELF'];
+                $script = htmlspecialchars($_SERVER['PHP_SELF']);
 
                 $tool_content .= claro_disp_wiki_editor( $wikiId, $title, $versionId, $content, $script
                     , true, false )
@@ -1065,7 +1065,7 @@
             $tool_content .= '</div>' . "\n";
 
             $tool_content .= '<form id="differences" method="GET" action="'
-                . $_SERVER['PHP_SELF']
+                . htmlspecialchars($_SERVER['PHP_SELF'])
                 . '">'
                 . "\n"
                 ;
@@ -1116,7 +1116,7 @@
 
                     $userUrl = $userStr;
 
-                    $versionUrl = '<a href="' . $_SERVER['PHP_SELF'] . '?wikiId='
+                    $versionUrl = '<a href="' . htmlspecialchars($_SERVER['PHP_SELF']) . '?wikiId='
                         . $wikiId . '&amp;title=' . rawurlencode( $title )
                         . '&amp;action=show&amp;versionId=' . $version['id']
                         . '">'
@@ -1141,7 +1141,7 @@
         }
         default:
         {
-            trigger_error( "Invalid action supplied to " . $_SERVER['PHP_SELF']
+            trigger_error( "Invalid action supplied to " . htmlspecialchars($_SERVER['PHP_SELF'])
                 , E_USER_ERROR
                 );
         }

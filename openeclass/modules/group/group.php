@@ -243,11 +243,11 @@ if ($is_adminOfCourse) {
 	<thead>
 	<tr>
 	<td width=\"50%\">&nbsp;<a href=\"group_creation.php\" class=\"operations_container\">$langNewGroupCreate</a></td>
-	<td width=\"50%\"><div align=\"right\"><a href=\"".$_SERVER['PHP_SELF']."?delete=yes\" onClick=\"return confirmation('delall');\">$langDeleteGroups</a>&nbsp;</div></td>
+	<td width=\"50%\"><div align=\"right\"><a href=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "?delete=yes\" onClick=\"return confirmation('delall');\">$langDeleteGroups</a>&nbsp;</div></td>
 	</tr>
 	<tr>
-	<td>&nbsp;<a href=\"".$_SERVER['PHP_SELF']."?fill=yes\">$langFillGroups</a></td>
-	<td><div align=\"right\"><a href=\"".$_SERVER['PHP_SELF']."?empty=yes\" onClick=\"return confirmation('emptyall');\">$langEmtpyGroups</a>&nbsp;</div></td>
+	<td>&nbsp;<a href=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "?fill=yes\">$langFillGroups</a></td>
+	<td><div align=\"right\"><a href=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "?empty=yes\" onClick=\"return confirmation('emptyall');\">$langEmtpyGroups</a>&nbsp;</div></td>
 	</tr>
 	</thead></table><br /><br /><br />";
 
@@ -353,7 +353,7 @@ if ($is_adminOfCourse) {
 		$tool_content .= "<td width='10%'><div class=\"cellpos\">
 		<a href=\"group_edit.php?userGroupId=".$group["id"]."\">
 		<img src=\"../../template/classic/img/edit.gif\" border=\"0\" title=\"".$langEdit."\"></a>
-		<a href=\"".$_SERVER['PHP_SELF']."?delete_one=yes&id=".$group["id"]."\" onClick=\"return confirmation('".addslashes($group["name"])."');\">
+		<a href=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "?delete_one=yes&id=".$group["id"]."\" onClick=\"return confirmation('".addslashes($group["name"])."');\">
 		<img src=\"../../template/classic/img/delete.gif\" border=\"0\" title=\"".$langDelete."\"></a></div></td>
     		</tr>";
 		$totalRegistered = $totalRegistered+$countRegistered;

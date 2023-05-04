@@ -121,7 +121,7 @@ cData;
 	// doesn't show the edit link if we come from the question pool to pick a question for an exercise
 	if(!isset($fromExercise)) {
 		$tool_content .= "
-		<a href=\"".$_SERVER['PHP_SELF']."?modifyQuestion=".$questionId."\">
+		<a href=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "?modifyQuestion=".$questionId."\">
 		<img src='../../template/classic/img/edit.gif' border='0' align='absmiddle' title='$langModify'></a>";
 	}
 

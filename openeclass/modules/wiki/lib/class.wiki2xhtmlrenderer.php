@@ -105,7 +105,7 @@
             $attr = ' href="'.$str.'"';
             if ( $this->wiki->pageExists( $str ) )
                 {
-                return "<a href=\"".$_SERVER['PHP_SELF']
+                return "<a href=\"".htmlspecialchars($_SERVER['PHP_SELF'])
                     ."?action=show&amp;title=".rawurlencode($str )
                     . "&amp;wikiId=" . $this->wiki->getWikiId()
                     . "\" class=\"wikiShow\">"
@@ -115,7 +115,7 @@
             }
             else
             {
-                return "<a href=\"".$_SERVER['PHP_SELF']
+                return "<a href=\"".htmlspecialchars($_SERVER['PHP_SELF'])
                     . "?action=edit&amp;title=" . rawurlencode($str )
                     . "&amp;wikiId=" . $this->wiki->getWikiId()
                     . "\" class=\"wikiEdit\">"
@@ -259,7 +259,7 @@
              
             if ($this->wiki->pageExists( $pageName ) )
             {
-                return ' href="' . $_SERVER['PHP_SELF']
+                return ' href="' . htmlspecialchars($_SERVER['PHP_SELF'])
                     . '?action=show&amp;title=' . rawurlencode($pageName )
                     . '&amp;wikiId=' . $this->wiki->getWikiId()
                     . '" class="wikiShow"'
@@ -267,7 +267,7 @@
             }
             else
             {
-                return ' href="' . $_SERVER['PHP_SELF']
+                return ' href="' . htmlspecialchars($_SERVER['PHP_SELF'])
                     . '?action=edit&amp;title=' . rawurlencode($pageName )
                     . '&amp;wikiId=' . $this->wiki->getWikiId()
                     . '" class="wikiEdit"'

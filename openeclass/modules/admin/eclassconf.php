@@ -159,7 +159,7 @@ else {
 	}
 	// Constract the form
 	$tool_content .= "
-    <form action=\"".$_SERVER['PHP_SELF']."\" method=\"post\">";
+    <form action=\"". htmlspecialchars($_SERVER['PHP_SELF']) . "\" method=\"post\">";
 	$tool_content .= "
 
   <table class=\"FormData\" width=\"99%\" align=\"left\">

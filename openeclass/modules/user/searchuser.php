@@ -101,7 +101,7 @@ if($is_adminOfCourse) {
 	if(!isset($search_prenom)) $search_prenom = "";
 	if(!isset($search_uname)) $search_uname = ""; 
 	
-	$tool_content .= "<form method='post' action='$_SERVER[PHP_SELF]'>";
+	$tool_content .= "<form method='post' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "'>";
 	$tool_content .= "<table width='99%' class='FormData'><tbody>
 	<tr>
 	<th width='220'>&nbsp;</th>

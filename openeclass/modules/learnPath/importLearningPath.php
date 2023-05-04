@@ -1225,7 +1225,7 @@ else // if method == 'post'
       UPLOAD FORM
      --------------------------------------*/
     $tool_content .= "
-    <form enctype=\"multipart/form-data\" action=\"".$_SERVER['PHP_SELF']."\" method=\"post\">
+    <form enctype=\"multipart/form-data\" action=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "\" method=\"post\">
     <table width=\"99%\" align=\"left\" class=\"FormData\">
     <tbody>
     <tr>

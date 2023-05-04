@@ -46,6 +46,9 @@ if ($is_adminOfCourse and isset($currentCourseID)) {
 		db_query("UPDATE accueil SET visible = 1 WHERE id='$eclass_module_id'", $currentCourseID);
 	}
 }
+
+header("X-XSS-Protection: 1; mode=block");
+
 //template path for logged out + logged in (ex., when session expires)
 $extraMessage = ""; //initialise var for security
 if (isset($errorMessagePath)) {
@@ -490,7 +493,7 @@ function print_a($TheArray) {
  *
  */
 function lang_selections() {
-	$html = '<form name="langform" action="' . $_SERVER ['PHP_SELF'] . '" method="get" >';
+	$html = '<form name="langform" action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '" method="get" >';
 	$html .= lang_select_options('localize', 'onChange="document.langform.submit();"');
 	$html .= '</form>';
 	return $html;
