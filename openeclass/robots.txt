@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /private/
+Disallow: /secret/
+Disallow: /fightclub/
+
+# Yury Boyka was here
