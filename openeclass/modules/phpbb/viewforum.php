@@ -85,6 +85,9 @@ $tool_content .= "<li><a href='newtopic.php?forum=$forum'>$langNewTopic</a></li>
 * Retrieve and present data from course's forum
 */
 
+// Better safe than sorry
+$forum = mysql_real_escape_string(intval($forum));
+
 $sql = "SELECT f.forum_type, f.forum_name
 	FROM forums f
 	WHERE forum_id = '$forum'";
@@ -143,6 +146,12 @@ if ($total_topics > $topics_per_page) { // navigation
 }
 
 if(isset($topicnotify)) { // modify topic notification
+
+	$uid = mysql_real_escape_string(intval($uid));
+	$cours_id = mysql_real_escape_string(intval($cours_id));
+	$topic_id = mysql_real_escape_string(intval($topic_id));
+	$topicnotify = mysql_real_escape_string(intval($topicnotify));
+
 	$rows = mysql_num_rows(db_query("SELECT * FROM forum_notify 
 		WHERE user_id = $uid AND topic_id = $topic_id AND course_id = $cours_id", $mysqlMainDb));
 	if ($rows > 0) {
@@ -163,6 +172,8 @@ $tool_content .= "<table width='99%' class='ForumSum'><thead><tr>
 <td class='ForumHead' width='100'>$langLastMsg</td>
 <td class='ForumHead' width='20'>$langNotifyActions</td>
 </tr></thead><tbody>";
+
+
 
 $sql = "SELECT t.*, p.post_time, p.nom AS nom1, p.prenom AS prenom1
         FROM topics t
@@ -237,8 +248,14 @@ if (mysql_num_rows($result) > 0) { // topics found
 		$tool_content .= "<td class='Forum_leftside1'>$myrow[prenom] $myrow[nom]</td>\n";
 		$tool_content .= "<td class='Forum_leftside'>$myrow[topic_views]</td>\n";
 		$tool_content .= "<td class='Forum_leftside1'>$myrow[prenom1] $myrow[nom1]<br />$last_post</td>";
+
+		$topic_id = mysql_real_escape_string(intval($myrow[topic_id]));
+		$uid = mysql_real_escape_string(intval($uid));
+		$cours_id = mysql_real_escape_string(intval($cours_id));
+
 		list($topic_action_notify) = mysql_fetch_row(db_query("SELECT notify_sent FROM forum_notify 
-			WHERE user_id = $uid AND topic_id = $myrow[topic_id] AND course_id = $cours_id", $mysqlMainDb));
+			WHERE user_id = $uid AND topic_id = $topic_id AND course_id = $cours_id", $mysqlMainDb));
+
 		if (!isset($topic_action_notify)) {
 			$topic_link_notify = FALSE;
 			$topic_icon = '_off';
@@ -246,12 +263,13 @@ if (mysql_num_rows($result) > 0) { // topics found
 			$topic_link_notify = toggle_link($topic_action_notify);
 			$topic_icon = toggle_icon($topic_action_notify);
 		}
+
 		$tool_content .= "<td class='Forum_leftside' style='text-align:center'>";
 		if (isset($_GET['start']) and $_GET['start'] > 0) {
-			$tool_content .= "<a href='$_SERVER[PHP_SELF]?forum=$forum&start=$_GET[start]&amp;topicnotify=$topic_link_notify&amp;topic_id=$myrow[topic_id]'>
+			$tool_content .= "<a href='" . htmlspecialchars($_SERVER[PHP_SELF]) . "?forum=$forum&start=$_GET[start]&amp;topicnotify=$topic_link_notify&amp;topic_id=$myrow[topic_id]'>
 			<img src='../../template/classic/img/announcements$topic_icon.gif' title='$langNotify'></img></a>";
 		} else {
-			$tool_content .= "<a href='$_SERVER[PHP_SELF]?forum=$forum&amp;topicnotify=$topic_link_notify&amp;topic_id=$myrow[topic_id]'>
+			$tool_content .= "<a href='" . htmlspecialchars($_SERVER[PHP_SELF]) . "?forum=$forum&amp;topicnotify=$topic_link_notify&amp;topic_id=$myrow[topic_id]'>
 			<img src='../../template/classic/img/announcements$topic_icon.gif' title='$langNotify'></img></a>";
 		}
 		$tool_content .= "</td></tr>";
