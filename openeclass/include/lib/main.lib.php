@@ -1212,18 +1212,23 @@ function ellipsize($string, $maxlen, $postfix = '...')
 }
 
 // Find the title of a course from its code
-function course_code_to_title($code)
-{
-        global $mysqlMainDb;
-        $r = db_query("SELECT intitule FROM cours WHERE code='$code'", $mysqlMainDb);
-        if ($r and mysql_num_rows($r) > 0) {
-                $row = mysql_fetch_row($r);
-                return $row[0];
-        } else {
-                return false;
-        }
-}
+function course_code_to_title($code) {
 
+	global $mysqlMainDb;
+	$mysqli = new mysqli($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $mysqlMainDb);
+
+	$stmt = $mysqli->prepare("SELECT intitule FROM cours WHERE code = ?");
+	$stmt->bind_param("s", $code);
+	$stmt->execute();
+	$result = $stmt->get_result();
+
+	if ($result->num_rows > 0) {
+		$row = $result->fetch_row();
+		return $row[0];
+	} else {
+		return false;
+	}
+}
 
 // Find the course id of a course from its code
 function course_code_to_id($code)
