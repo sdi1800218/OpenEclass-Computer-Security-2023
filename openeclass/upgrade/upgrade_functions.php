@@ -141,7 +141,6 @@ function mysql_table_exists($db, $table)
 }
 
 // checks if a mysql table field exists
-
 function mysql_field_exists($db,$table,$field)
 {
 	$fields = db_query("SHOW COLUMNS from $table LIKE '$field'",$db);
@@ -211,9 +210,8 @@ function update_assignment_submit()
 	}
 }
 
-
-// checks if admin user
 /*
+// checks if admin user
 function is_admin($username, $password, $mysqlMainDb) {
 
 	mysql_select_db($mysqlMainDb);
@@ -230,28 +228,43 @@ function is_admin($username, $password, $mysqlMainDb) {
 	}
 }
 */
+
 function is_admin($username, $password, $mysqlMainDb) {
 
-        // 1. Establish connection and prepare statement
-        $con = mysqli_connect("localhost", "my_user", "my_password", $mysqlMainDb);
-        $stmt = mysqli_prepare($con, "SELECT * FROM user, admin 
-                WHERE admin.idUser = user.user_id AND user.username = ? AND user.password = ?");
+        // 1. Establish connection
+        $con = new mysqli($GLOBALS['mysqlServer'],
+                        $GLOBALS['mysqlUser'],
+                        $GLOBALS['mysqlPassword'],
+                        $mysqlMainDb);
+        
+        //mysqli_select_db($con, $mysqlMainDb);
+        if ($con->connect_error) {
+                die("NoSQL for you: " . $con->connect_error);
+        }
 
-        // 2. Bind params and execute
+        // 2. Prepare statement
+        //$con = mysqli_connect("localhost", "user, "password", $mysqlMainDb);
+        $stmt = mysqli_prepare($con, 
+                "SELECT * FROM user, admin 
+                WHERE admin.idUser = user.user_id
+                AND user.username = ? AND user.password = ?");
+
+        // 3. Bind params and execute
         mysqli_stmt_bind_param($stmt, "ss", $username, $password);
         mysqli_stmt_execute($stmt);
 
-        // 3. Logiiic
+        // 4. Logiiic
         $result = mysqli_stmt_get_result($stmt);
+        mysqli_stmt_close($stmt);
+
         if (!$result or mysqli_num_rows($result) == 0) {
-            return FALSE;
+                return FALSE;
         } else {
-            $row = mysqli_fetch_array($result);
-            $_SESSION['uid'] = $row['user_id'];
-            return TRUE;
+                $row = mysqli_fetch_array($result);
+                $_SESSION['uid'] = $row['user_id'];
+                return TRUE;
         }
-    }
-    
+}
 
 // Check whether an entry with the specified $define_var exists in the accueil table
 function accueil_tool_missing($define_var) {
