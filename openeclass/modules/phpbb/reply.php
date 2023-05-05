@@ -74,7 +74,12 @@ hContent;
 include_once("./config.php");
 include("functions.php");
 
+$forum = mysql_real_escape_string(intval($forum));
+$topic = mysql_real_escape_string(intval($topic));
 if (isset($post_id) && $post_id) {
+
+	$post_id = mysql_real_escape_string(intval($post_id));
+
 	// We have a post id, so include that in the checks..
 	$sql  = "SELECT f.forum_type, f.forum_name, f.forum_access, t.topic_title ";
 	$sql .= "FROM forums f, topics t, posts p ";
@@ -166,26 +171,60 @@ if (isset($submit) && $submit) {
 	if (isset($sig) && $sig) {
 		$message .= "\n[addsig]";
 	}
-	$sql = "INSERT INTO posts (topic_id, forum_id, poster_id, post_time, poster_ip, nom, prenom)
-			VALUES ('$topic', '$forum', '$uid','$time', '$poster_ip', '$nom', '$prenom')";
-	$result = db_query($sql, $currentCourseID);
-	$this_post = mysql_insert_id();
+
+	// Mak-a-conneccion
+	$mysqli = new mysqli($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $currentCourseID);
+
+	//$sql = "INSERT INTO posts (topic_id, forum_id, poster_id, post_time, poster_ip, nom, prenom)
+	//		VALUES ('$topic', '$forum', '$uid','$time', '$poster_ip', '$nom', '$prenom')";
+	//$result = db_query($sql, $currentCourseID);
+	//$this_post = mysql_insert_id();
+
+	// push
+	$stmt_insert1 = $mysqli->prepare("INSERT INTO posts (topic_id, forum_id, poster_id, post_time, poster_ip, nom, prenom) 
+										VALUES (?, ?, ?, ?, ?, ?, ?)");
+	$stmt_insert1->bind_param("sssssss", $topic, $forum, $uid, $time, $poster_ip, $nom, $prenom);
+	$stmt_insert1->execute();
+	$this_post = $stmt_insert1->insert_id;
+	$stmt_insert1->close();
+
 	if ($this_post) {
-		$sql = "INSERT INTO posts_text (post_id, post_text) VALUES ($this_post, " .
-                        autoquote($message) . ")";
-		$result = db_query($sql, $currentCourseID); 
+		$stmt_insert2 = $mysqli->prepare("INSERT INTO posts_text (post_id, post_text) 
+											VALUES ( ?, ? )");
+		$message = htmlspecialchars($message);
+		$stmt_insert2->bind_param("is", $this_post, $message);
+		$stmt_insert2->execute();
+		$stmt_insert2->close();
 	}
-	$sql = "UPDATE topics SET topic_replies = topic_replies+1, topic_last_post_id = $this_post, topic_time = '$time' 
-		WHERE topic_id = '$topic'";
-	$result = db_query($sql, $currentCourseID);
-	$sql = "UPDATE forums SET forum_posts = forum_posts+1, forum_last_post_id = '$this_post' 
-		WHERE forum_id = '$forum'";
-	$result = db_query($sql, $currentCourseID);
+
+
+	//$sql = "UPDATE topics SET topic_replies = topic_replies+1, topic_last_post_id = $this_post, topic_time = '$time' 
+	//	WHERE topic_id = '$topic'";
+	//$result = db_query($sql, $currentCourseID);
+	//$sql = "UPDATE forums SET forum_posts = forum_posts+1, forum_last_post_id = '$this_post' 
+	//	WHERE forum_id = '$forum'";
+	//$result = db_query($sql, $currentCourseID);
+
+	$stmt_update1 = $mysqli->prepare("UPDATE topics SET topic_replies = topic_replies+1, topic_last_post_id = ?, topic_time = ? 
+								WHERE topic_id = ?");
+	$stmt_update1->bind_param("iss", $this_post, $time, $topic);
+	$stmt_update1->execute();
+	$stmt_update1->close();
+
+	$stmt_update2 = $mysqli->prepare("UPDATE forums SET forum_posts = forum_posts+1, forum_last_post_id = ?
+											WHERE forum_id = ?");
+	$stmt_update2->bind_param("ii", $this_post, $forum);
+	$stmt_update2->execute();
+	$stmt_update2->close();
+
+	// TODO: How should this result get handled?
 	if (!$result) {
 		$tool_content .= $langErrorUpadatePostCount;
 		draw($tool_content, 2, 'phpbb', $head_content);
 		exit();
 	}
+
+	$mysqli->close();
 	
 	// --------------------------------
 	// notify users 
@@ -290,10 +329,13 @@ if (isset($submit) && $submit) {
 	}
 	if (!isset($reply)) {
 		$reply = "";
+	} else {
+		$reply = htmlspecialchars($reply);
 	}
 	if (!isset($quote)) {
 		$quote = "";
 	}
+
 	$tool_content .= "</th><td valign='top'>
 	<table class='xinha_editor'>
 	<tr>
