@@ -83,7 +83,7 @@ else {
 		|| empty($_POST[BCMS_HOST]) || empty($_POST[BCMS_REPO]) 
 		|| empty($_POST[BCMS_USER]) || empty($_POST[BCMS_PASS]) ) {
 		$tool_content .= "<p class=\"caution_small\">$langEmptyFields</p>
-			<br/><br/><p align=\"right\"><a href='$_SERVER[PHP_SELF]'>$langAgain</a></p>";
+			<br/><br/><p align=\"right\"><a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "'>$langAgain</a></p>";
 	}
 	else {
 		$repo = array(
@@ -99,7 +99,7 @@ else {
 			$tool_content .= "<p class=\"caution_small\">".
 				$GLOBALS['langFailConnectBetaCMSBridge'].
 				"</p>".
-				"<br/><br/><p align=\"right\"><a href='$_SERVER[PHP_SELF]'>$langAgain</a></p>";
+				"<br/><br/><p align=\"right\"><a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "'>$langAgain</a></p>";
 			draw($tool_content,3);
 			die();
 		}

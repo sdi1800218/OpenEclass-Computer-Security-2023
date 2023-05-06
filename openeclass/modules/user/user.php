@@ -179,7 +179,7 @@ if ($countUser >= $endList) {
    <thead>
    <tr>
      <td valign='bottom' align='left' width='20%'>
-       <form method='post' action='$_SERVER[PHP_SELF]?numbList=begin'>
+       <form method='post' action=" . htmlspecialchars($_SERVER['PHP_SELF']) . "?numbList=begin'>
          <input type='submit' value='<< $langBegin' name='numbering' class='auth_input' />
        </form>
      </td>
@@ -188,7 +188,7 @@ if ($countUser >= $endList) {
 	// if beginning of list or complete listing, do not show "previous" button
 	if ($startList!=0) {
 		$tool_content .= "
-       <form method='post' action='$_SERVER[PHP_SELF]?startList=$startList&amp;numbList=less'>
+       <form method='post' action=" . htmlspecialchars($_SERVER['PHP_SELF']) . "?startList=$startList&amp;numbList=less'>
          <div align='center'><input type='submit' value='< $langPreced50 $endList' name='numbering' class='auth_input' /></div>
        </form>";
 	}
@@ -211,7 +211,7 @@ if ($countUser >= $endList) {
      </td>
      <td valign='bottom' width='20%'>
        <div align='right'>
-       <form method='post' action='$_SERVER[PHP_SELF]?numbList=final'>
+       <form method='post' action=" . htmlspecialchars($_SERVER['PHP_SELF']) . "?numbList=final'>
          <input type='submit' value='$langEnd >>' name='numbering' class='auth_input' />
        </form>
        </div>

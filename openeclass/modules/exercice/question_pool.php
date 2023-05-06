@@ -251,7 +251,7 @@ if($is_adminOfCourse) {
 				"&page=".$prevpage."\">".$langPreviousPage."</a></small>";
 			} else {
 				$tool_content .= "<small>&lt;&lt; 
-				<a href='$_SERVER[PHP_SELF]?page=$prevpage'>$langPreviousPage</a></small>";
+				<a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "?page=$prevpage'>$langPreviousPage</a></small>";
 			}
 		}
 		if ($page < $numpages) {
@@ -264,7 +264,7 @@ if($is_adminOfCourse) {
 				"</a> &gt;&gt;</small>";
 			} else {
 				$tool_content .= "<small>
-				<a href='$_SERVER[PHP_SELF]?page=$nextpage'>$langNextPage</a> &gt;&gt;
+				<a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "?page=$nextpage'>$langNextPage</a> &gt;&gt;
 				</small>";
 			}
 		}

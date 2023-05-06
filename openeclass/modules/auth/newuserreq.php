@@ -35,12 +35,28 @@ $navigation[]= array ("url"=>"../admin/", "name"=> $langAdmin);
 // Initialise $tool_content
 $tool_content = "";
 $submit = isset($_POST['submit'])?$_POST['submit']:'';
+
 // ----------------------------
 // register user
 // ----------------------------
-
 if($submit) {
-   // register user
+  // register user
+  $stmt = $pdo->prepare("INSERT INTO `$mysqlMainDb`.user
+  (user_id, nom, prenom, username, password, email, statut, department, registered_at, expires_at, lang)
+  VALUES ('NULL', :nom, :prenom, :uname, :password_encrypted, :email_form, '5', :department, :registered_at, :expires_at, :lang)");
+  $stmt->execute(array(
+  ':nom' => $nom_form,
+  ':prenom' => $prenom_form,
+  ':uname' => $uname,
+  ':password_encrypted' => md5($password),
+  ':email_form' => $email_form,
+  ':department' => $dep['id'],
+  ':registered_at' => time(),
+  ':expires_at' => time() + $durationAccount,
+  ':lang' => $lang
+  ));
+
+  // register user
   $nom_form = isset($_POST['nom_form'])?$_POST['nom_form']:'';
   $prenom_form = isset($_POST['prenom_form'])?$_POST['prenom_form']:'';
   $uname = isset($_POST['uname'])?$_POST['uname']:'';
@@ -50,7 +66,7 @@ if($submit) {
   $localize = isset($_POST['localize'])?$_POST['localize']:'';
   $lang = langname_to_code($localize);	
 
-      // check if user name exists
+  // check if user name exists
   $username_check=mysql_query("SELECT username FROM `$mysqlMainDb`.user WHERE username='$uname'");
   while ($myusername = mysql_fetch_array($username_check)) {
     $user_exist=$myusername[0];
@@ -96,7 +112,7 @@ $langEmail : $emailhelpdesk
 send_mail('', '', '', $email_form, $emailsubject, $emailbody, $charset);
 
 
-// register user
+    // register user
     $registered_at = time();
     $expires_at = time() + $durationAccount;
 
@@ -121,7 +137,7 @@ send_mail('', '', '', $email_form, $emailsubject, $emailbody, $charset);
 //---------------------------
 // 	display form
 // ---------------------------
-
+/* TODO
 if (isset($_GET['lang'])) {
 	$lang = $_GET['lang'];
 	$lang = langname_to_code($language);
@@ -130,59 +146,123 @@ if (isset($_GET['lang'])) {
 $tool_content .= "<table width=\"99%\"><tbody>
    <tr>
     <td>
-    <form action='$_SERVER[PHP_SELF]' method='post'>
+    <form action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "' method='post'>
     <table border=0 cellpadding='1' cellspacing='2' border='0' width='100%' align=center>
 	<thead>
-    <tr>
+    <tr>.
     <th class='left' width=20%>$langSurname</th>
-	 <td><input type='text' class=auth_input_admin name='nom_form' value='".@$ps."' >
+	 <td><input type='text' class=auth_input_admin name='nom_form' value='" . htmlspecialchars(@$ps, ENT_QUOTES) . "' >
 	<small>&nbsp;(*)</small></td>
 	  </tr>
 	  <tr>
 	  <th class='left'>$langName</th>
-	  <td><input type='text' class=auth_input_admin name='prenom_form' value='".@$pn."' >
+	  <td><input type='text' class=auth_input_admin name='prenom_form' value='" . htmlspecialchars(@$pn, ENT_QUOTES) . "' >
 	<small>&nbsp;(*)</small></td>
 	  </tr>
 	  <tr>
 	  <th class='left'>$langUsername</th>
-	  <td><input type='text' class=auth_input_admin name='uname' value='".@$pu."'>
+	  <td><input type='text' class=auth_input_admin name='uname' value='" . htmlspecialchars(@$pu, ENT_QUOTES) . "'>
 		<small>&nbsp;(*)</small></td>
 	  </tr>
 	  <tr>
 	  <th class='left'>$langPass&nbsp;:</th>
-	  <td><input type='text' class=auth_input_admin name='password' value=".create_pass()."></td>
+	  <td><input type='text' class=auth_input_admin name='password' value='" . htmlspecialchars(create_pass(), ENT_QUOTES) . "'></td>
 	  </tr>
 	  <tr>
     	<th class='left'>$langEmail</th>
-	  <td><input type='text' class=auth_input_admin name='email_form' value='".@$pe."'>
+	  <td><input type='text' class=auth_input_admin name='email_form' value='" . htmlspecialchars(@$pe, ENT_QUOTES) . "'>
 		<small>&nbsp;(*)</small></td>
 	  </tr>
 	  <tr>
 	  <th class='left'>$langFaculty &nbsp;
-		</span></th><td>";
+		</span></th><td>'";
 
 	$dep = array();
-        $deps=db_query("SELECT name FROM faculte order by id");
-			while ($n = mysql_fetch_array($deps))
-				$dep[$n[0]] = $n['name'];  
+  $deps=db_query("SELECT name FROM faculte order by id");
+	while ($n = mysql_fetch_array($deps))
+		$dep[$n[0]] = $n['name'];  
 
-		if (isset($pt))
-			$tool_content .= selection ($dep, 'department', $pt);
-		else 
-			$tool_content .= selection ($dep, 'department');
+	if (isset($pt))
+		$tool_content .= selection ($dep, 'department', $pt);
+	else 
+		$tool_content .= selection ($dep, 'department');
  
 	$tool_content .= "<tr><th class='left'>$langLanguage</th><td>";
 	$tool_content .= lang_select_options('localize');
 	$tool_content .= "</td></tr>";
 
-	$tool_content .= "</td></tr><tr><td colspan=\"2\">".$langRequiredFields."</td></tr>
+	$tool_content .= "</td></tr><tr><td colspan=\"2\">" . htmlspecialchars($langRequiredFields, ENT_QUOTES) . "</td></tr>
 		<tr><td>&nbsp;</td>
-		<td><input type=\"submit\" name=\"submit\" value=\"".$langSubmit."\" ></td>
+		<td><input type=\"submit\" name=\"submit\" value=\"" . htmlspecialchars($langSubmit, ENT_QUOTES) . "\" ></td>
 		</tr></thead></table>
-		<input type='hidden' name='rid' value='".@$id."'>
-		</tbody></table></form>";
-    $tool_content .= "<center><p><a href=\"../admin/index.php\">$langBack</p></center>";
+		<input type='hidden' name='rid' value=" . htmlspecialchars(@$id, ENT_QUOTES) . ">"
+		."</tbody></table></form>";
+    $tool_content .= "<center><p"
+} // end of if 
+*/
 
+if (isset($_GET['lang'])) {
+  $lang = $_GET['lang'];
+  $lang = langname_to_code($language);
+}
+
+$tool_content .= "<table width=\"99%\"><tbody>
+ <tr>
+  <td>
+  <form action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "' method='post'>
+  <table border=0 cellpadding='1' cellspacing='2' border='0' width='100%' align=center>
+<thead>
+  <tr>
+  <th class='left' width=20%>$langSurname</th>
+ <td><input type='text' class=auth_input_admin name='nom_form' value='" . htmlspecialchars(@$ps, ENT_QUOTES) . "' >
+<small>&nbsp;(*)</small></td>
+  </tr>
+  <tr>
+  <th class='left'>$langName</th>
+  <td><input type='text' class=auth_input_admin name='prenom_form' value='" . htmlspecialchars(@$pn, ENT_QUOTES) . "' >
+<small>&nbsp;(*)</small></td>
+  </tr>
+  <tr>
+  <th class='left'>$langUsername</th>
+  <td><input type='text' class=auth_input_admin name='uname' value='" . htmlspecialchars(@$pu, ENT_QUOTES) . "'>
+  <small>&nbsp;(*)</small></td>
+  </tr>
+  <tr>
+  <th class='left'>$langPass&nbsp;:</th>
+  <td><input type='text' class=auth_input_admin name='password' value='" . htmlspecialchars(create_pass(), ENT_QUOTES) . "'></td>
+  </tr>
+  <tr>
+    <th class='left'>$langEmail</th>
+  <td><input type='text' class=auth_input_admin name='email_form' value='" . htmlspecialchars(@$pe, ENT_QUOTES) . "'>
+  <small>&nbsp;(*)</small></td>
+  </tr>
+  <tr>
+  <th class='left'>$langFaculty &nbsp;
+  </span></th><td>'";
+
+$dep = array();
+$stmt = $conn->prepare("SELECT name FROM faculte order by id");
+$stmt->execute();
+$result = $stmt->get_result();
+while ($n = $result->fetch_assoc())
+  $dep[$n['name']] = $n['name'];  
+
+if (isset($pt))
+  $tool_content .= selection ($dep, 'department', $pt);
+else 
+  $tool_content .= selection ($dep, 'department');
+
+$tool_content .= "<tr><th class='left'>$langLanguage</th><td>";
+$tool_content .= lang_select_options('localize');
+$tool_content .= "</td></tr>";
+
+$tool_content .= "</td></tr><tr><td colspan=\"2\">" . htmlspecialchars($langRequiredFields, ENT_QUOTES) . "</td></tr>
+  <tr><td>&nbsp;</td>
+  <td><input type=\"submit\" name=\"submit\" value=\"" . htmlspecialchars($langSubmit, ENT_QUOTES) . "\" ></td>
+  </tr></thead></table>
+  <input type='hidden' name='rid' value='" . htmlspecialchars(@$id, ENT_QUOTES) . "'>"
+  ."</tbody></table></form>";
+  $tool_content .= "<center><p";
 } // end of if 
 
 draw($tool_content,3, 'auth');

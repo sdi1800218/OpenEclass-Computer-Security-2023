@@ -50,22 +50,22 @@ function get_auth_id()
 {
 	global $db;
 	$sql = "SELECT auth_id FROM auth WHERE auth_default=1";
-  $auth_method = mysql_query($sql,$db);
-  if($auth_method)
-  {
+	$auth_method = mysql_query($sql, $db);
+	if($auth_method)
+	{
 		$authrow = mysql_fetch_row($auth_method);
 		if(mysql_num_rows($auth_method)==1)
 		{
-	    $auth_id = $authrow[0];
-	    return $auth_id;
+			$auth_id = $authrow[0];
+			return $auth_id;
 		}
 		else
 		{
-	    return 0;
+			return 0;
 		}
 	}
-  else
-  {
+	else
+	{
 		return 0;
 	}
 }

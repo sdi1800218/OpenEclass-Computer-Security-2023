@@ -70,12 +70,12 @@ if(isset($deleteQuestion))
     <tr>
       <th class="left" width="220">$langQuestionList :</th>
       <td><div class="right">
-      <a href="$_SERVER[PHP_SELF]?newQuestion=yes">${langNewQu}</a> | <a href="question_pool.php?fromExercise=${exerciseId}">${langGetExistingQuestion}</a>
+      <a href="" . htmlspecialchars($_SERVER['PHP_SELF']) . "?newQuestion=yes">${langNewQu}</a> | <a href="question_pool.php?fromExercise=${exerciseId}">${langGetExistingQuestion}</a>
       </div></td>
     </tr>
     </thead>
     </table>
-cData;
+cData; // TODO
 
   $tool_content .= <<<cData
   

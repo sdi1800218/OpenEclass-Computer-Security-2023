@@ -743,7 +743,7 @@ elseif (isset($_REQUEST['install1']) || isset($_REQUEST['back1']))
 	<tr>
 	<td class=\"odd\" class=\"left\">&nbsp;</td>
 	<td>
-	<form action='$_SERVER[PHP_SELF]?alreadyVisited=1' method=\"post\">
+	<form action=" . htmlspecialchars($_SERVER['PHP_SELF']) . "?alreadyVisited=1' method=\"post\">
 	<input type=\"hidden\" name=\"welcomeScreen\" value=\"welcomeScreen\">
 	<input type=\"submit\" name=\"install1\" value=\"$langNextStep >\">
 	</form>

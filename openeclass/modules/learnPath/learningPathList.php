@@ -369,7 +369,7 @@ if($is_adminOfCourse) {
 		$tool_content .= "
     <div id='operations_container'>
       <ul id='opslist'>
-        <li><a href='$_SERVER[PHP_SELF]?cmd=create' title='$langCreateNewLearningPath'>$langCreate</a></li>
+        <li><a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "?cmd=create' title='$langCreateNewLearningPath'>$langCreate</a></li>
         <li><a href='importLearningPath.php' title='$langimportLearningPath'>$langImport</a></li>
         <li><a href='detailsAll.php' title='$langTrackAllPathExplanation'>$langProgress</a></li>
         <li><a href='modules_pool.php'>$langLearningObjectsInUse_sort</a></li>

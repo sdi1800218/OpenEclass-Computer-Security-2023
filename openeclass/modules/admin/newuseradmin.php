@@ -65,13 +65,13 @@ if($submit) {
 	// check if there are empty fields
 	if (!$all_set) {
 		$tool_content .= "<p class='caution_small'>$langEmptyFields</p>
-			<br><br><p align='right'><a href='$_SERVER[PHP_SELF]'>$langAgain</a></p>";
+			<br><br><p align='right'><a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "'>$langAgain</a></p>";
 	} elseif ($user_exist) {
 		$tool_content .= "<p class='caution_small'>$langUserFree</p>
-			<br><br><p align='right'><a href='$_SERVER[PHP_SELF]'>$langAgain</a></p>";
+			<br><br><p align='right'><a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "'>$langAgain</a></p>";
 	} elseif(!email_seems_valid($email_form)) {
 		$tool_content .= "<p class='caution_small'>$langEmailWrong.</p>
-			<br><br><p align='right'><a href='$_SERVER[PHP_SELF]'>$langAgain</a></p>";
+			<br><br><p align='right'><a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "'>$langAgain</a></p>";
 	} else {
                 $registered_at = time();
 		$expires_at = time() + $durationAccount;

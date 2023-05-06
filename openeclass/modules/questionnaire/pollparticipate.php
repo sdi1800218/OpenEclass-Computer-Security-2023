@@ -80,9 +80,9 @@ function printPollForm() {
 	if (($temp_CurrentDate >= $temp_StartDate) && ($temp_CurrentDate < $temp_EndDate)) {
 		$tool_content .= <<<cData
 	<p>
-	<form action="$_SERVER[PHP_SELF]" id="poll" method="post">
-		<input type="hidden" value="2" name="UseCase">
-		<input type="hidden" value="$pid" name="pid">
+	<form action=" . htmlspecialchars($_SERVER['PHP_SELF']) . " id=\"poll\" method=\"post\">
+		<input type=\"hidden\" value=\"2\" name=\"UseCase\">
+		<input type=\"hidden\" value=\"$pid\" name=\"pid\">
 		
 cData;
 		$tool_content .= "<div id=\"topic_title_id\">".$thePoll["name"]."</div>\n";

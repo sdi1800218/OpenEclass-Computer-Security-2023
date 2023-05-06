@@ -151,7 +151,7 @@ while ($myrow = mysql_fetch_array($result)) {
 	"<td>$myrow[prenom]</td>".
 	"<td>$myrow[nom]</td>".
 	"<td>$myrow[username]</td>".
-	"<td><a href=\"$_SERVER[PHP_SELF]?add=$myrow[user_id]\">".
+	"<td><a href=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "?add=$myrow[user_id]\">".
 	"$langRegister</a></td></tr>\n";
 	$i++;
 }

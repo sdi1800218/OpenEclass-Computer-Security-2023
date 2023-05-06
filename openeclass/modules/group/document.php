@@ -344,8 +344,8 @@ $tool_content .= "
     <div id='operations_container'>
       <ul id='opslist'><li><a href='group_space.php?$groupset'>$langGroupSpaceLink</a></li>
         <li><a href='../phpbb/viewforum.php?forum=$forum_id'>$langGroupForumLink</a></li>
-        <li><a href='$_SERVER[PHP_SELF]?$groupset&amp;createDir=".$curDirPath."'>$langCreateDir</a></li>
-        <li><a href='$_SERVER[PHP_SELF]?$groupset&amp;uploadPath=".$curDirPath."'>$langDownloadFile</a></li>
+        <li><a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "?$groupset&amp;createDir=".$curDirPath."'>$langCreateDir</a></li>
+        <li><a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "?$groupset&amp;uploadPath=".$curDirPath."'>$langDownloadFile</a></li>
       </ul>
     </div>";
 
@@ -437,7 +437,7 @@ $tool_content .= "
   /*** go to parent directory ***/
 if ($curDirName) // if the $curDirName is empty, we're in the root point and we can't go to a parent dir
 {
-	$tool_content .= "<a href='$_SERVER[PHP_SELF]?$groupset&amp;openDir=".$parentDir."'>$langUp\n" .
+	$tool_content .= "<a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "?$groupset&amp;openDir=".$parentDir."'>$langUp\n" .
                          "<img src='../../template/classic/img/parent.gif' style='vertical-align: middle;' /></a>";
 }
 
@@ -463,11 +463,11 @@ if (isset($dirNameList))
 		$cmdDirName = $curDirPath."/".$dirName;
 		$tool_content .= "\n    <tr>";
 		$tool_content .= "\n        <td width=\"1\">";
-		$tool_content .= "<a href='$_SERVER[PHP_SELF]?$groupset&amp;openDir=$cmdDirName'".@$style.">\n";
+		$tool_content .= "<a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "?$groupset&amp;openDir=$cmdDirName'".@$style.">\n";
 		$tool_content .= "<img src=\"../../template/classic/img/folder.gif\" border=0 hspace=5>";
 		$tool_content .= "</a></td>";
 		$tool_content .= "\n        <td align='left'><div align='left'>";
-		$tool_content .= "<a href='$_SERVER[PHP_SELF]?$groupset&amp;openDir=$cmdDirName'".@$style.">\n";
+		$tool_content .= "<a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "?$groupset&amp;openDir=$cmdDirName'".@$style.">\n";
 		$tool_content .= $dspDirName;
 		$tool_content .= "</a></div></td>";
 		/*** skip display date and time ***/
@@ -476,13 +476,13 @@ if (isset($dirNameList))
 		$tool_content .= "\n        <td>&nbsp;</td>";
                 if ($is_tutor or $is_adminOfCourse) {
                         /*** move command ***/
-                        $tool_content .= "\n        <td width=\"1\"><a href=\"$_SERVER[PHP_SELF]?$groupset&amp;move=".$cmdDirName."\">
+                        $tool_content .= "\n        <td width=\"1\"><a href=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "?$groupset&amp;move=".$cmdDirName."\">
                         <img src=\"../../template/classic/img/move_doc.gif\" border=0 title=\"$langMove\"></a></td>\n";
                         /*** rename command ***/
-                        $tool_content .= "\n        <td width=\"1\"><a href=\"$_SERVER[PHP_SELF]?$groupset&amp;rename=".$cmdDirName."\">
+                        $tool_content .= "\n        <td width=\"1\"><a href=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "?$groupset&amp;rename=".$cmdDirName."\">
                         <img src=\"../../template/classic/img/edit.gif\" border=0 title=\"$langRename\"></a></td>\n";
                         /*** delete command ***/
-                        $tool_content .= "\n        <td width=\"1\"><a href=\"$_SERVER[PHP_SELF]?$groupset&amp;delete=".$cmdDirName."\" onClick=\"return confirmation();\"><img src=\"../../template/classic/img/delete.gif\" title=\"$langDelete\" border=0></a></td>\n";
+                        $tool_content .= "\n        <td width=\"1\"><a href=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "?$groupset&amp;delete=".$cmdDirName."\" onClick=\"return confirmation();\"><img src=\"../../template/classic/img/delete.gif\" title=\"$langDelete\" border=0></a></td>\n";
                 } else {
                         $tool_content .= "<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>\n";
                 }
@@ -514,9 +514,9 @@ if (isset($fileNameList))
 		$r = mysql_fetch_array($result);
 
 		if(empty($r["filename"])) { // compatibility
-			$tool_content .=  "<a href='$_SERVER[PHP_SELF]?$groupset&amp;action2=download&id=".$cmdFileName."' title=\"$langSave\">".$dspFileName."</a>";
+			$tool_content .=  "<a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "?$groupset&amp;action2=download&id=".$cmdFileName."' title=\"$langSave\">".$dspFileName."</a>";
 		} else {
-			$tool_content .= "<a href='$_SERVER[PHP_SELF]?$groupset&amp;action2=download&id=$r[path]'>$r[filename]</a>";
+			$tool_content .= "<a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "?$groupset&amp;action2=download&id=$r[path]'>$r[filename]</a>";
 		}
 		$tool_content .= "</div></td>";
 		/*** size ***/
@@ -527,13 +527,13 @@ if (isset($fileNameList))
 		<a href=\"../work/group_work.php?submit=$urlShortFileName\">$langPublish</a></td>\n";
                 if ($is_tutor or $is_adminOfCourse) {
                         /*** copy command ***/
-                        $tool_content .= "\n        <td><a href=\"$_SERVER[PHP_SELF]?$groupset&amp;move=".$cmdFileName."\">
+                        $tool_content .= "\n        <td><a href=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "?$groupset&amp;move=".$cmdFileName."\">
                         <img src=\"../../template/classic/img/move_doc.gif\" border=0></a></td>\n";
                         /*** rename command ***/
-                        $tool_content .= "\n        <td><a href=\"$_SERVER[PHP_SELF]?$groupset&amp;rename=".$cmdFileName."\">
+                        $tool_content .= "\n        <td><a href=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "?$groupset&amp;rename=".$cmdFileName."\">
                         <img src=\"../../template/classic/img/edit.gif\" border=0></a></td>\n";
                         /*** delete command ***/
-                        @$tool_content .= "\n        <td><a href=\"$_SERVER[PHP_SELF]?$groupset&amp;delete=".$cmdFileName."\" onClick=\"return confirmation();\">
+                        @$tool_content .= "\n        <td><a href=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "?$groupset&amp;delete=".$cmdFileName."\" onClick=\"return confirmation();\">
                         <img src=\"../../template/classic/img/delete.gif\" border=0></a></td>\n";
                 } else {
                         $tool_content .= "<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>\n";

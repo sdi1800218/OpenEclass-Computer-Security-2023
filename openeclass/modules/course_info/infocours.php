@@ -59,7 +59,7 @@ hContent;
 if (isset($_POST['submit'])) {
         if (empty($_POST['title'])) {
                 $tool_content .= "<p class='caution_small'>$langNoCourseTitle<br />
-                                  <a href='$_SERVER[PHP_SELF]'>$langAgain</a></p><br />";
+                                  <a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "'>$langAgain</a></p><br />";
         } else {
                 if (isset($_POST['localize'])) {
                         $newlang = $language = langcode_to_name($_POST['localize']);

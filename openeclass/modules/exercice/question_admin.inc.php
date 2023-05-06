@@ -32,7 +32,7 @@ if(isset($usedInSeveralExercises)) {
 $tool_content .= <<<cData
 
     <h3>${questionName}</h3>
-    <form method="post" action="$_SERVER[PHP_SELF]?modifyQuestion=${modifyQuestion}&modifyAnswers=${modifyAnswers}">
+    <form method="post" action="" . htmlspecialchars($_SERVER['PHP_SELF']) . "?modifyQuestion=${modifyQuestion}&modifyAnswers=${modifyAnswers}">
     <table width="99%">
     <tr>
 	<td>
@@ -137,7 +137,7 @@ cData;
 
 	// doesn't show the edit link if we come from the question pool to pick a question for an exercise
 	if(!isset($fromExercise)) {
-		$tool_content .= "&nbsp;&nbsp;<a href='$_SERVER[PHP_SELF]?modifyAnswers=$questionId'>
+		$tool_content .= "&nbsp;&nbsp;<a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "?modifyAnswers=$questionId'>
 		<img src='../../template/classic/img/edit.gif' border='0' align='absmiddle' title='$langModify'></a>";
 	}
         $tool_content .= "<br/></td></tr>";

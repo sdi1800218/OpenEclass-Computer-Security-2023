@@ -51,7 +51,7 @@ else {
 	if (empty($_POST[KEY_TITLE]) || empty($_POST[KEY_DESCRIPTION]) || empty($_POST[KEY_KEYWORDS]) 
 		|| empty($_POST[KEY_AUTHORS]) ) {
 		$tool_content .= "<p class=\"caution_small\">$langEmptyFields</p>
-			<br/><br/><p align=\"right\"><a href='$_SERVER[PHP_SELF]'>$langAgain</a></p>";
+			<br/><br/><p align=\"right\"><a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "'>$langAgain</a></p>";
 	}
 	else {
 		$lesson = array(
