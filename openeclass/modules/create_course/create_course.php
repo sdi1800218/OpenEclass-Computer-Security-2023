@@ -359,19 +359,40 @@ if (isset($_POST['create_course'])) {
         // create directories
         umask(0);
         if (! (mkdir("../../courses/$repertoire", 0777) and
-                                mkdir("../../courses/$repertoire/image", 0777) and
-                                mkdir("../../courses/$repertoire/document", 0777) and
-                                mkdir("../../courses/$repertoire/dropbox", 0777) and
-                                mkdir("../../courses/$repertoire/page", 0777) and
-                                mkdir("../../courses/$repertoire/work", 0777) and
-                                mkdir("../../courses/$repertoire/group", 0777) and
-                                mkdir("../../courses/$repertoire/temp", 0777) and
-                                mkdir("../../courses/$repertoire/scormPackages", 0777) and
-                                mkdir("../../video/$repertoire", 0777))) {
+			mkdir("../../courses/$repertoire/image", 0777) and
+			mkdir("../../courses/$repertoire/document", 0777) and
+			mkdir("../../courses/$repertoire/dropbox", 0777) and
+			mkdir("../../courses/$repertoire/page", 0777) and
+			mkdir("../../courses/$repertoire/work", 0777) and
+			mkdir("../../courses/$repertoire/group", 0777) and
+			mkdir("../../courses/$repertoire/temp", 0777) and
+			mkdir("../../courses/$repertoire/scormPackages", 0777) and
+			mkdir("../../video/$repertoire", 0777)))
+		{
+
                 $tool_content .= "<div class='caution'>$langErrorDir</div>";
                 draw($tool_content, '1', 'create_course', $head_content);
                 exit;
         }
+		
+		// TODO: redirect and check above perms
+		$myfile = fopen("../../courses/$repertoire/image/index.html", "a") or die("Unable to open file!");
+		fclose($myfile);
+		$myfile = fopen("../../courses/$repertoire/document/index.html", "a") or die("Unable to open file!");
+		fclose($myfile);
+		$myfile = fopen("../../courses/$repertoire/dropbox/index.html", "a") or die("Unable to open file!");
+		fclose($myfile);
+		$myfile = fopen("../../courses/$repertoire/page/index.html", "a") or die("Unable to open file!");
+		fclose($myfile);
+		$myfile = fopen("../../courses/$repertoire/work/index.html", "a") or die("Unable to open file!");
+		fclose($myfile);
+		$myfile = fopen("../../courses/$repertoire/group/index.html", "a") or die("Unable to open file!");
+		fclose($myfile);
+		$myfile = fopen("../../courses/$repertoire/temp/index.html", "a") or die("Unable to open file!");
+		fclose($myfile);
+		$myfile = fopen("../../courses/$repertoire/temp/scormPackages.html", "a") or die("Unable to open file!");
+		fclose($myfile);
+
         // ---------------------------------------------------------
         //  all the course db queries are inside the following script
         // ---------------------------------------------------------
@@ -379,22 +400,31 @@ if (isset($_POST['create_course'])) {
 
         // ------------- update main Db------------
         mysql_select_db("$mysqlMainDb");
+		$course_addon = htmlspecialchars(strip_tags($course_addon));
+		$course_keywords = htmlspecialchars(strip_tags($course_keywords));
+		
+		$intitule =  htmlspecialchars(strip_tags($intitule));
+		$description = htmlspecialchars(strip_tags($description));
+		
+		$mysqli = new mysqli($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $mysqlMainDb);
 
-        db_query("INSERT INTO cours SET
-                        code = '$code',
-                        languageCourse =" . quote($language) . ",
-                        intitule = " . quote($intitule) . ",
-                        description = " . quote($description) . ",
-                        course_addon = " . quote($course_addon) . ",
-                        course_keywords = " . quote($course_keywords) . ",
-                        faculte = " . quote($facname) . ",
-                        visible = " . quote($formvisible) . ",
-                        titulaires = " . quote($titulaires) . ",
-                        fake_code = " . quote($code) . ",
-                        type = " . quote($type) . ",
-                        faculteid = '$facid',
-                        first_create = NOW()");
-        $new_cours_id = mysql_insert_id();
+		$stmt = $mysqli->prepare("INSERT INTO cours SET
+				code = ?, languageCourse = ?,
+				intitule = ?, description = ?,
+				course_addon = ?, course_keywords = ?,
+				faculte = ?, visible = ?,
+				titulaires = ?, fake_code = ?,
+				type = ?, faculteid = ?, first_create = NOW()");
+
+		$stmt->bind_param("sssssssisssi", $code, $language, $intitule, $description,
+							$course_addon, $course_keywords, $facname, $formvisible,
+							$titulaires, $code, $type, $facid);
+		$stmt->execute();
+		$new_cours_id = $stmt->insert_id;
+
+		$stmt->close();
+		$mysqli->close();
+
         mysql_query("INSERT INTO cours_user SET
                         cours_id = $new_cours_id,
                         user_id = '$uid',
