@@ -27,6 +27,7 @@
 // if we come from the home page
 if (isset($from_home) and ($from_home == TRUE) and isset($_GET['cid'])) {
         session_start();
+        $cid = htmlspecialchars($cid);
         $_SESSION['dbname'] = $cid;
 }
 $require_current_course = TRUE;
@@ -57,9 +58,10 @@ $head_content = <<<hContent
 hContent;
 
 if (isset($_POST['submit'])) {
+
         if (empty($_POST['title'])) {
                 $tool_content .= "<p class='caution_small'>$langNoCourseTitle<br />
-                                  <a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "'>$langAgain</a></p><br />";
+                                  <a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . ">$langAgain</a></p><br />";
         } else {
                 if (isset($_POST['localize'])) {
                         $newlang = $language = langcode_to_name($_POST['localize']);
@@ -87,23 +89,40 @@ if (isset($_POST['submit'])) {
                 }
 
                 list($facid, $facname) = explode('--', $_POST['facu']);
-                db_query("UPDATE `$mysqlMainDb`.cours
-                          SET intitule = " . autoquote($_POST['title']) .",
-                              faculte = " . autoquote($facname) . ",
-                              description = " . autoquote($_POST['description']) . ",
-                              course_addon = " . autoquote($_POST['course_addon']) . ",
-                              course_keywords = ".autoquote($_POST['course_keywords']) . ",
-                              visible = " . intval($_POST['formvisible']) . ",
-                              titulaires = " . autoquote($_POST['titulary']) . ",
-                              languageCourse = '$newlang',
-                              type = " . autoquote($_POST['type']) . ",
-                              password = " . autoquote($_POST['password']) . ",
-                              faculteid = " . intval($facid) . "
-                          WHERE cours_id = $cours_id");
+
+                // hope this works
+                $mysqli = new mysqli($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $mysqlMainDb);
+                
+                $stmt = $conn->mysqli("UPDATE cours
+                        SET intitule = ?, faculte = ?,
+                             description = ?, course_addon = ?,
+                             course_keywords = ?, visible = ?,
+                             titulaires = ?, languageCourse = ?,
+                             type = ?, password = ?, faculteid = ?
+                        WHERE cours_id = ?");
+                $stmt->bind_param("sssssissssii",
+                        htmlspecialchars(strip_tags($_POST['title'])),
+                        htmlspecialchars(strip_tags($facname)),
+                        htmlspecialchars(strip_tags($_POST['description'])),
+                        htmlspecialchars(strip_tags($_POST['course_addon'])),
+                        htmlspecialchars(strip_tags($_POST['course_keywords'])),
+                        intval($_POST['formvisible']),
+                        htmlspecialchars(strip_tags($_POST['titulary'])),
+                        $newlang,
+                        htmlspecialchars(strip_tags($_POST['type'])),
+                        htmlspecialchars(strip_tags($_POST['password'])),
+                        intval($facid),
+                        $cours_id);
+                
+                $stmt->execute();
+                $stmt->close();
+                $mysqli->close();
+
+                $facname = htmlspecialchars($facname);
                 db_query("UPDATE `$mysqlMainDb`.cours_faculte
-                          SET faculte = " . autoquote($facname) . ",
-                              facid = " . intval($facid) . "
-                          WHERE code='$currentCourseID'");
+                        SET faculte = " . autoquote($facname)
+                                . ", facid = " . intval($facid)
+                                . "WHERE code='$currentCourseID'");
 
                 // update Home Page Menu Titles for new language
                 mysql_select_db($currentCourseID, $db);
