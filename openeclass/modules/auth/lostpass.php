@@ -98,15 +98,15 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 } elseif ((!isset($email) || !email_seems_valid($email)
      || !isset($userName) || empty($userName)) && !isset($_REQUEST['do'])) {
 
-		$lang_pass_invalid_mail= "$lang_pass_invalid_mail1 $lang_pass_invalid_mail2 $lang_pass_invalid_mail3";
+	$lang_pass_invalid_mail= "$lang_pass_invalid_mail1 $lang_pass_invalid_mail2 $lang_pass_invalid_mail3";
 
 	/***** Email address entry form *****/
-        if (isset($email) and !email_seems_valid($email)) {
-                $tool_content .= '<table width="99%"><tbody><tr><td class="caution">' .
-                                '<p><strong>' . $lang_pass_invalid_mail . '<br />&nbsp;<br />' .
-                                '&nbsp;<br />&nbsp;<br /></strong></p>' .
-				'</td></tr></tbody></table>';
-        }
+	if (isset($email) and !email_seems_valid($email)) {
+			$tool_content .= '<table width="99%"><tbody><tr><td class="caution">' .
+							'<p><strong>' . $lang_pass_invalid_mail . '<br />&nbsp;<br />' .
+							'&nbsp;<br />&nbsp;<br /></strong></p>' .
+			'</td></tr></tbody></table>';
+	}
 
 	$tool_content .= $lang_pass_intro;
 
@@ -130,11 +130,13 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 
 } elseif (!isset($_REQUEST['do'])) {
 	/***** If valid e-mail address was entered, find user and send email *****/
+	$email = filter_var($email, FILTER_SANITIZE_EMAIL);
+	$userName = filter_var($userName, FILTER_SANITIZE_EMAIL);
 	$res = db_query("SELECT user_id, nom, prenom, username, password, statut FROM user
 			WHERE email = '" . mysql_escape_string($email) . "'
 			AND BINARY username = '" . mysql_escape_string($userName) . "'", $mysqlMainDb);
 
-        $found_editable_password = false;
+    $found_editable_password = false;
 	if (mysql_num_rows($res) == 1) {
 		$text = $langPassResetIntro. $emailhelpdesk;
 		$text .= "$langHowToResetTitle";

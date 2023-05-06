@@ -44,7 +44,7 @@ $auth = get_auth_id();
 if (!isset($submit)) {
 
 @$tool_content .= "
-<form action=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "\" method=\"post\">
+<form action=\"" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8') . "\" method=\"post\">
 <table width=\"99%\" style=\"border: 1px solid #edecdf;\">
 <thead>
 <tr>
@@ -53,32 +53,33 @@ if (!isset($submit)) {
   <thead>
   <tr>
    <th class='left' width='220'>$langSurname</th>
-   <td><input size='35' type='text' name='nom_form' value='$nom_form' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
+   <td><input size='35' type='text' name='nom_form' value='" . htmlspecialchars($nom_form, ENT_QUOTES, 'UTF-8') . "' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
   </tr>
   <tr>
     <th class='left'>$langName</th>
-    <td><input size='35' type='text' name='prenom_form' value='$prenom_form' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
+    <td><input size='35' type='text' name='prenom_form' value='" . htmlspecialchars($prenom_form, ENT_QUOTES, 'UTF-8') . "' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
   </tr>
 	<tr>
     <th class='left'>$langPhone</th>
-    <td><input size='35' type='text' name='userphone' value='$userphone' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
+    <td><input size='35' type='text' name='userphone' value='" . htmlspecialchars($userphone, ENT_QUOTES, 'UTF-8') . "' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
   </tr>
   <tr>
     <th class='left'>$langUsername</th>
-    <td><input size='35' type='text' name='uname' value='$uname' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
+    <td><input size='35' type='text' name='uname' value='" . htmlspecialchars($uname, ENT_QUOTES, 'UTF-8') . "' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
   </tr>
   <tr>
     <th class='left'>$langEmail</th>
-    <td><input size='35' type='text' name='email_form' value='$email_form' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
+    <td><input size='35' type='text' name='email_form' value='" . htmlspecialchars($email_form, ENT_QUOTES, 'UTF-8') . "' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
   </tr>
   <tr>
     <th class='left'>$langComments</td>
-    <td><textarea name='usercomment' COLS='32' ROWS='4' WRAP='SOFT' class='FormData_InputText'>$usercomment</textarea>&nbsp;&nbsp;<small>(*) $profreason</small></td>
+    <td><textarea name='usercomment' COLS='32' ROWS='4' WRAP='SOFT' class='FormData_InputText'>" . htmlspecialchars($usercomment, ENT_QUOTES, 'UTF-8') . "</textarea>&nbsp;&nbsp;<small>(*) $profreason</small></td>
   </tr>
   <tr>
     <th class='left'>$langFaculty</th>
     <td><select name='department'>";
-        $deps=mysql_query("SELECT id, name FROM faculte order by id");
+
+        $deps = mysql_query("SELECT id, name FROM faculte order by id");
         while ($dep = mysql_fetch_array($deps))
         {
         	$tool_content .= "<option value='$dep[id]'>$dep[name]</option>\n";
@@ -113,14 +114,15 @@ if (!isset($submit)) {
 
 } else {
 
-// registration
-$registration_errors = array();
+    // registration
+    $registration_errors = array();
 
     // check if there are empty fields
     if (empty($nom_form) or empty($prenom_form) or empty($userphone)
-	 or empty($usercomment) or empty($uname) or (empty($email_form))) {
+	      or empty($usercomment) or empty($uname) or (empty($email_form)))
+    {
       $registration_errors[]=$langEmptyFields;
-	   }
+	  }
 
     if (count($registration_errors) == 0) {    // registration is ok
             // ------------------- Update table prof_request ------------------------------
@@ -141,18 +143,18 @@ $registration_errors = array();
             }
 
             db_query('INSERT INTO prof_request SET
-                                profname = ' . autoquote($prenom_form). ',
-                                profsurname = ' . autoquote($nom_form). ',
-                                profuname = ' . autoquote($uname). ',
-                                profemail = ' . autoquote($email_form). ',
-                                proftmima = ' . autoquote($department). ',
-                                profcomm = ' . autoquote($userphone). ',
-                                status = 1,
-                                statut = 1,
-                                date_open = NOW(),
-                                comment = ' . autoquote($usercomment). ',
-                                lang = ' . autoquote($proflang),
-                     $mysqlMainDb);
+                profname = ' . autoquote(htmlspecialchars($prenom_form, ENT_QUOTES, 'UTF-8')) . ',
+                profsurname = ' . autoquote(htmlspecialchars($nom_form, ENT_QUOTES, 'UTF-8')) . ',
+                profuname = ' . autoquote(htmlspecialchars($uname, ENT_QUOTES, 'UTF-8')) . ',
+                profemail = ' . autoquote(htmlspecialchars($email_form, ENT_QUOTES, 'UTF-8')) . ',
+                proftmima = ' . autoquote(htmlspecialchars($department, ENT_QUOTES, 'UTF-8')) . ',
+                profcomm = ' . autoquote(htmlspecialchars($userphone, ENT_QUOTES, 'UTF-8')) . ',
+                status = 1,
+                statut = 1,
+                date_open = ' . autoquote(htmlspecialchars(date('Y-m-d H:i:s'), ENT_QUOTES, 'UTF-8')) . ',
+                comment = ' . autoquote(htmlspecialchars($usercomment, ENT_QUOTES, 'UTF-8')) . ',
+                lang = ' . autoquote(htmlspecialchars($proflang, ENT_QUOTES, 'UTF-8')),
+            $mysqlMainDb);
 
             //----------------------------- Email Message --------------------------
             $MailMessage = $mailbody1 . $mailbody2 . "$prenom_form $nom_form\n\n" . $mailbody3 .
