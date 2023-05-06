@@ -24,7 +24,6 @@
 *                       eMail: info@openeclass.org
 * =========================================================================*/
 
-
 $require_admin = true;
 include '../../include/baseTheme.php';
 include '../../include/sendMail.inc.php';
@@ -57,10 +56,19 @@ if($submit) {
 		$proflanguage = langname_to_code($language);
 	}
 
+	$mysqli = new mysqli($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $mysqlMainDb);
+
+	$stmt = $mysqli->prepare("SELECT username FROM `$mysqlMainDb`.user WHERE username=?");
+	$stmt->bind_param("s", htmlspecialchars(strip_tags($uname)));
+	$stmt->execute();
+
 	// check if user name exists
-	$username_check = mysql_query("SELECT username FROM `$mysqlMainDb`.user 
-			WHERE username=".autoquote($uname));
-	$user_exist = (mysql_num_rows($username_check) > 0);
+    $username_check = $stmt->get_result();
+    $rows = $username_check->fetch_assoc();
+    $user_exist = ($rows > 0);
+
+    $stmt->close();
+    $mysqli->close();
 
 	// check if there are empty fields
 	if (!$all_set) {
@@ -73,20 +81,48 @@ if($submit) {
 		$tool_content .= "<p class='caution_small'>$langEmailWrong.</p>
 			<br><br><p align='right'><a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "'>$langAgain</a></p>";
 	} else {
-                $registered_at = time();
+  
+		$registered_a = time();
 		$expires_at = time() + $durationAccount;
 		$password_encrypted = md5($password);
-		$inscr_user = db_query("INSERT INTO `$mysqlMainDb`.user
-				(nom, prenom, username, password, email, statut, department, am, registered_at, expires_at,lang)
-				VALUES (" .
-				autoquote($nom_form) . ', ' .
-				autoquote($prenom_form) . ', ' .
-				autoquote($uname) . ", '$password_encrypted', " .
-				autoquote($email_form) .
-				", $pstatut, $depid, " . autoquote($comment) . ", $registered_at, $expires_at, '$proflanguage')");
+		
+		$mysqli = new mysqli($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $mysqlMainDb);
 
-		// close request
-	  	$rid = intval($_POST['rid']);
+		// Check connection
+		if ($mysqli->connect_error) {
+			die("Connection failed: " . $mysqli->connect_error);
+		}
+
+		// Sanitize the variables by removing any harmful characters
+		// TODO: this is better than the other approaches
+		$nom_form = filter_var($nom_form, FILTER_SANITIZE_STRING);
+		$prenom_form = filter_var($prenom_form, FILTER_SANITIZE_STRING);
+		$uname = filter_var($uname, FILTER_SANITIZE_STRING);
+		$email_form = filter_var($email_form, FILTER_SANITIZE_EMAIL);
+		$comment = filter_var($comment, FILTER_SANITIZE_STRING);
+		$proflanguage = filter_var($proflanguage, FILTER_SANITIZE_STRING);
+		$depid = filter_var($depid, FILTER_SANITIZE_NUMBER_INT);
+
+		// Prepare the SQL statement
+		$stmt = $mysqli->prepare("INSERT INTO user (nom, prenom, username, password,
+								email, statut, department, am,
+								registered_at, expires_at, lang)
+								VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+		// Bind the variables to the placeholders
+		$stmt->bind_param("sssssiisiis", $nom_form, $prenom_form, $uname, $password_encrypted, $email_form, $pstatut, $depid, $comment, $registered_at, $expires_at, $proflanguage);
+
+		// Execute the SQL statement
+		$stmt->execute();
+
+		echo "New record created successfully";
+
+		// Close the statement and connection
+		$stmt->close();
+		$mysqli->close();
+
+	  	$rid = mysql_real_escape_string(intval($_POST['rid']));
+
   	  	db_query("UPDATE prof_request set status = 2, date_closed = NOW() WHERE rid = '$rid'");
 
                 if ($pstatut == 1) {
@@ -103,8 +139,8 @@ if($submit) {
 		
 		// send email
 		
-                $emailsubject = "$langYourReg $siteName $type_message";
-                $emailbody = "
+        $emailsubject = "$langYourReg $siteName $type_message";
+        $emailbody = "
 $langDestination $prenom_form $nom_form
 
 $langYouAreReg $siteName $type_message, $langSettings $uname
@@ -123,18 +159,43 @@ $langEmail : $emailhelpdesk
         }
 
 } else {
-        $lang = false;
-	if (isset($id)) { // if we come from prof request
-		$res = mysql_fetch_array(db_query("SELECT profname, profsurname, profuname, profemail, proftmima, comment, lang, statut 
-			FROM prof_request WHERE rid='$id'"));
-		$ps = $res['profsurname'];
-		$pn = $res['profname'];
-		$pu = $res['profuname'];
-		$pe = $res['profemail'];
-		$pt = $res['proftmima'];
-		$pcom = $res['comment'];
-		$lang = $res['lang'];
-                $pstatut = $res['statut'];
+		$lang = false;
+
+		// Create connection
+		$mysqli = new mysqli($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $mysqlMainDb);
+
+		// Check connection
+		if ($mysqli->connect_error) {
+			die("Connection failed: " . $conn->connect_error);
+		}
+
+		// Prepare the SQL statement
+		$stmt = $mysqli->prepare("SELECT profname, profsurname, profuname, profemail, proftmima, comment, lang, statut FROM prof_request WHERE rid=?");
+
+		// Bind the variable to the placeholder
+		$stmt->bind_param("i", intval($id));
+
+		// Execute the SQL statement
+		$stmt->execute();
+
+		// Fetch the result set and store the values in variables
+		$stmt->bind_result($pn, $ps, $pu, $pe, $pt, $pcom, $lang, $pstatut);
+		$stmt->fetch();
+
+		// Sanitize the variables by removing any harmful characters
+		$pn = filter_var($pn, FILTER_SANITIZE_STRING);
+		$ps = filter_var($ps, FILTER_SANITIZE_STRING);
+		$pu = filter_var($pu, FILTER_SANITIZE_STRING);
+		$pe = filter_var($pe, FILTER_SANITIZE_EMAIL);
+		$pt = filter_var($pt, FILTER_SANITIZE_STRING);
+		$pcom = filter_var($pcom, FILTER_SANITIZE_STRING);
+		$lang = filter_var($lang, FILTER_SANITIZE_STRING);
+		$pstatut = filter_var($pstatut, FILTER_SANITIZE_NUMBER_INT);
+
+		// Close the statement and connection
+		$stmt->close();
+		$mysqli->close();
+
 	} elseif (@$_GET['type'] == 'user') {
                 $pstatut = 5;
         } else {
@@ -178,7 +239,6 @@ $langEmail : $emailhelpdesk
 	<tr>
 	<th class='left'>$langFaculty</th>
 	<td>";
-	
 	$dep = array();
 	$deps = db_query("SELECT id, name FROM faculte order by id");
 	while ($n = mysql_fetch_array($deps)) {
