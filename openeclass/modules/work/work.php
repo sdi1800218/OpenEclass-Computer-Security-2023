@@ -130,6 +130,9 @@ hContent;
 // main program
 //-------------------------------------------
 
+// fix me up doc
+$id = filter_var($id, FILTER_SANITIZE_NUMBER_INT); // todo: maybe this ownt work and needs intval()
+
 if ($is_adminOfCourse) {
 	if (isset($grade_comments)) {
 		$nameTools = $m['WorkView'];
@@ -151,11 +154,15 @@ if ($is_adminOfCourse) {
 	} elseif (isset($id)) {
 		if (isset($choice)) {
 			if ($choice == 'disable') {
+				// Just sanitize id
 				db_query("UPDATE assignments SET active = '0' WHERE id = '$id'");
 				show_assignments($langAssignmentDeactivated);
+			
 			} elseif ($choice == 'enable') {
+
 				db_query("UPDATE assignments SET active = '1' WHERE id = '$id'");
 				show_assignments($langAssignmentActivated);
+			
 			} elseif ($choice == 'delete') {
 				die("invalid option");
 			} elseif ($choice == "do_delete") {
@@ -246,8 +253,6 @@ function add_assignment($title, $comments, $desc, $deadline, $group_submissions)
 	mkdir("$workPath/$secret",0777);
 }
 
-
-
 function submit_work($id) {
 
 	global $tool_content, $workPath, $uid, $stud_comments, $group_sub, $REMOTE_ADDR, $langUploadSuccess,
@@ -264,16 +269,24 @@ function submit_work($id) {
 		unset($status);
 	}
 
-	$submit_ok = FALSE; //Default do not allow submission
+	//Default do not allow submission
+	$submit_ok = FALSE;
+
 	if(isset($uid) && $uid) { //check if loged-in
-		if ($GLOBALS['statut'] == 10) { //user is guest
+
+		//user is guest
+		if ($GLOBALS['statut'] == 10) {
 			$submit_ok = FALSE;
+
 		} else { //user NOT guest
+
 			if(isset($status) && isset($status[$_SESSION["dbname"]])) {
+
 				//user is registered to this lesson
 				$res = db_query("SELECT (TO_DAYS(deadline) - TO_DAYS(NOW())) AS days
 					FROM assignments WHERE id = '$id'");
 				$row = mysql_fetch_array($res);
+
 				if ($row['days'] < 0) {
 					$submit_ok = FALSE; //after assignment deadline
 				} else {
@@ -295,50 +308,87 @@ function submit_work($id) {
 
   	if($submit_ok) { //only if passed the above validity checks...
 
-	$msg1 = delete_submissions_by_uid($uid, -1, $id);
+		$msg1 = delete_submissions_by_uid($uid, -1, $id);
 
-	$local_name = greek_to_latin(uid_to_name($uid));
-	$am = mysql_fetch_array(db_query("SELECT am FROM user WHERE user_id = '$uid'"));
-	if (!empty($am[0])) {
-		$local_name = "$local_name $am[0]";
-	}
-	$local_name = replace_dangerous_char($local_name);
-	if (preg_match('/\.(ade|adp|bas|bat|chm|cmd|com|cpl|crt|exe|hlp|hta|' .'inf|ins|isp|jse|lnk|mdb|mde|msc|msi|msp|mst|pcd|pif|reg|scr|sct|shs|' .'shb|url|vbe|vbs|wsc|wsf|wsh)$/', $_FILES['userfile']['name'])) {
-		$tool_content .= "<p class=\"caution_small\">$langUnwantedFiletype: {$_FILES['userfile']['name']}<br />";
-		$tool_content .= "<a href=\"$_SERVER[PHP_SELF]?id=$id\">$langBack</a></p><br />";
-		return;
-	}
-	$secret = work_secret($id);
-        $ext = get_file_extension($_FILES['userfile']['name']);
-	$filename = "$secret/$local_name" . (empty($ext)? '': '.' . $ext);
-	if (move_uploaded_file($_FILES['userfile']['tmp_name'], "$workPath/$filename")) {
-		$msg2 = "$langUploadSuccess";//to message
-		$group_id = user_group($uid, FALSE);
-		if ($group_sub == 'yes' and !was_submitted(-1, $group_id, $id)) {
-			delete_submissions_by_uid(-1, $group_id, $id);
-			db_query("INSERT INTO assignment_submit
-				(uid, assignment_id, submission_date, submission_ip, file_path,
-				file_name, comments, group_id) VALUES ('$uid','$id', NOW(),
-				'$REMOTE_ADDR', '$filename','".$_FILES['userfile']['name'].
-				"', '$stud_comments', '$group_id')", $currentCourseID);
-		} else {
-			db_query("INSERT INTO assignment_submit
-				(uid, assignment_id, submission_date, submission_ip, file_path,
-				file_name, comments) VALUES ('$uid','$id', NOW(), '$REMOTE_ADDR',
-				'$filename','".$_FILES['userfile']['name'].
-				"', '$stud_comments')", $currentCourseID);
+		$local_name = greek_to_latin(uid_to_name($uid));
+		$am = mysql_fetch_array(db_query("SELECT am FROM user WHERE user_id = '$uid'"));
+
+		if (!empty($am[0])) {
+			$local_name = "$local_name $am[0]";
 		}
 
-		$tool_content .="<p class='success_small'>$msg2<br />$msg1<br /><a href='work.php'>$langBack</a></p><br />";
-	} else {
-	$tool_content .="    <p class='caution_small'>$langUploadError<br /><a href='work.php'>$langBack</a></p><br />";
-	}
+		// Hmmm
+		$local_name = replace_dangerous_char($local_name);
+
+		// Sani
+		$local_name = htmlspecialchars(strip_tags($local_name));
+		$userfile = htmlspecialchars(strip_tags($_FILES['userfile']['name']));
+
+		// Sanitize filename
+		if (preg_match('/\.(ade|adp|bas|bat|chm|cmd|com|cpl|crt|exe|hlp|hta|' .'inf|ins|isp|jse|lnk|mdb|mde|msc|msi|msp|mst|pcd|pif|reg|scr|sct|shs|' .'shb|url|vbe|vbs|wsc|wsf|wsh)$/', $userfile)) {
+			$tool_content .= "<p class=\"caution_small\">$langUnwantedFiletype: {$userfile}<br />";
+			$tool_content .= "<a href=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "?id=$id\">$langBack</a></p><br />";
+			return;
+		}
+
+		$secret = work_secret($id);
+		$ext = get_file_extension($userfile);
+		$filename = "$secret/$local_name" . (empty($ext)? '': '.' . $ext);
+
+		if (move_uploaded_file($_FILES['userfile']['tmp_name'], "$workPath/$filename")) {
+
+			$msg2 = "$langUploadSuccess";//to message
+			$group_id = user_group($uid, FALSE);
+			$stud_comments = htmlspecialchars(strip_tags($local_name));
+
+			$mysqli = new mysqli($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $currentCourseID);
+
+			if ($group_sub == 'yes' and !was_submitted(-1, $group_id, $id)) {
+				delete_submissions_by_uid(-1, $group_id, $id);
+
+				$stmt = $mysqli->prepare("INSERT INTO assignment_submit
+                               (uid, assignment_id, submission_date, submission_ip,
+							   file_path, file_name, comments, group_id) 
+							   VALUES (?,?, NOW(),?, ?,?,?, ?)");
+
+      			$stmt->bind_param("iissssi", $uid, $id, $REMOTE_ADDR, $filename,
+										$userfile, $stud_comments, $group_id);
+      			$stmt->execute();
+
+				//db_query("INSERT INTO assignment_submit
+				//	(uid, assignment_id, submission_date, submission_ip, file_path,
+				//	file_name, comments, group_id) VALUES ('$uid','$id', NOW(),
+				//	'$REMOTE_ADDR', '$filename','".$userfile.
+				//	"', '$stud_comments', '$group_id')", $currentCourseID);
+				$stmt->close();
+			} else {
+				$stmt = $conn->prepare("INSERT INTO assignment_submit
+                               (uid, assignment_id, submission_date, submission_ip,
+							   file_path, file_name, comments)
+							   VALUES (?,?, NOW(),?, ?,?,?)");
+
+      			$stmt->bind_param("iissss", $uid, $id, $REMOTE_ADDR, $filename, 
+										$userfile, $stud_comments);
+      			$stmt->execute();
+
+				//db_query("INSERT INTO assignment_submit
+				//	(uid, assignment_id, submission_date, submission_ip, file_path,
+				//	file_name, comments) VALUES ('$uid','$id', NOW(), '$REMOTE_ADDR',
+				//	'$filename','".$userfile.
+				//	"', '$stud_comments')", $currentCourseID);
+				$stmt->close();
+			}
+			$mysqli->close();
+
+			$tool_content .="<p class='success_small'>$msg2<br />$msg1<br /><a href='work.php'>$langBack</a></p><br />";
+		} else {
+		$tool_content .="    <p class='caution_small'>$langUploadError<br /><a href='work.php'>$langBack</a></p><br />";
+		}
 
   } else { // not submit_ok
   	$tool_content .="<p class=\"caution_small\">$langExerciseNotPermit<br /><a href='work.php'>$langBack</a></p></br>";
   }
 }
-
 
 //  assignment - prof view only
 function new_assignment()
@@ -451,7 +501,7 @@ function show_edit_assignment($id)
 
 	$description = q($row['description']);
 	$tool_content .= <<<cData
-    <form action="$_SERVER[PHP_SELF]" method="post" onsubmit="return checkrequired(this, 'title');">
+    <form action=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "\" method="post" onsubmit="return checkrequired(this, 'title');">
     <input type="hidden" name="id" value="$id" />
     <input type="hidden" name="choice" value="do_edit" />
     <table width="99%" class="FormData">
