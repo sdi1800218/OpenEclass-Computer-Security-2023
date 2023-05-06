@@ -167,13 +167,19 @@ if (!isset( $_POST['authors']) || !isset( $_POST['description']))
 			// set title
 			$dropbox_title = $dropbox_filename;
 			$format = get_file_extension($dropbox_filename);
-                	$dropbox_filename = safe_filename($format);
+            $dropbox_filename = safe_filename($format); // TODO
+
 			// Transform any .php file in .phps fo security
-			// $dropbox_filename = php2phps ($dropbox_filename);
+			// $dropbox_filename = php2phps ($dropbox_filename); WTF
+			// TODO: Handle files to avoid RFI
+			
 			// set author
-			if ($_POST['authors'] == '')
+			$authoria = filter_var($_POST['authors'], FILTER_SANITIZE_STRING);
+			$description = filter_var($_POST['description'], FILTER_SANITIZE_STRING);
+
+			if ($authoria == '')
 			{
-				$_POST['authors'] = getUserNameFromId($uid);
+				$authoria = getUserNameFromId($uid);
 			}
 
 			if ($error) {}
@@ -198,8 +204,9 @@ if (!isset( $_POST['authors']) || !isset( $_POST['description']))
 			if (!$error)
 			{
 				move_uploaded_file($dropbox_filetmpname, $dropbox_cnf["sysPath"] . '/' . $dropbox_filename)
-				or die($dropbox_lang["uploadError"]);
-				new Dropbox_SentWork($uid, $dropbox_title, $_POST['description'], $_POST['authors'], $dropbox_filename, $dropbox_filesize, $newWorkRecipients);
+								or die($dropbox_lang["uploadError"]);
+				// TODO
+				new Dropbox_SentWork($uid, $dropbox_title, $description, $authoria, $dropbox_filename, $dropbox_filesize, $newWorkRecipients);
 			}
 		}
 		chdir ($cwd);
@@ -244,9 +251,10 @@ if (isset($_GET['mailingIndex']))  // examine or send
 		$sel = "SELECT u.user_id, u.nom, u.prenom, cu.statut
 				FROM `".$mysqlMainDb."`.`user` u
 				LEFT JOIN `".$mysqlMainDb."`.`cours_user` cu
-				ON cu.user_id = u.user_id AND cu.cours_id = $cours_id";
+				ON cu.user_id = u.user_id AND cu.cours_id = " . intval($cours_id);
 		$sel .= " WHERE u.".$dropbox_cnf["mailingWhere".$var]." = '";
 
+		// wtf are these?
 		function getUser($thisRecip)
 		{
 			global $dropbox_lang, $var, $sel;
@@ -380,11 +388,10 @@ if (isset($_GET['mailingIndex']))  // examine or send
 			}
 
 			// find student course members not among the recipients
-
 			$sql = "SELECT u.nom, u.prenom
 					FROM `".$mysqlMainDb."`.`cours_user` cu
 					LEFT JOIN  `".$mysqlMainDb."`.`user` u
-					ON cu.user_id = u.user_id AND cu.cours_id = $cours_id
+					ON cu.user_id = u.user_id AND cu.cours_id = " . intval($cours_id) . "
 					WHERE cu.statut = 5
 					AND u.user_id NOT IN ('" . implode("', '" , $students) . "')";
 			$result = db_query($sql);
