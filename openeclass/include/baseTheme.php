@@ -49,6 +49,7 @@ if ($is_adminOfCourse and isset($currentCourseID)) {
 }
 
 header("X-XSS-Protection: 1; mode=block");
+include_once './csrf-magic/csrf-magic.php';
 
 //template path for logged out + logged in (ex., when session expires)
 $extraMessage = ""; //initialise var for security
