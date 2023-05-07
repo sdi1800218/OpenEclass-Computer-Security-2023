@@ -337,7 +337,6 @@ if ((!isset($changePass)) || isset($_POST['submit'])) {
     </tr>
     </tbody>
     </table>
-
 </form>
    ";
 }
