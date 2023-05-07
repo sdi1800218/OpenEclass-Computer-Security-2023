@@ -63,7 +63,7 @@ $id_hidden_input = '';
 
 foreach (array('title', 'title_en', 'newContent', 'newContent_en', 'comment', 'comment_en') as $var) {
         if (isset($_POST[$var])) {
-                $GLOBALS[$var] = autoquote($_POST[$var]);
+                $GLOBALS[$var] = autoquote(htmlspecialchars($_POST[$var]));
         } else {
                 $GLOBALS[$var] = '';
         }
@@ -72,12 +72,12 @@ $visible = isset($_POST['visible'])? 'V': 'I';
 
 if (isset($_GET['delete'])) {
         // delete announcement command
-        $id = intval($_GET['delete']);
+        $id = intval($_GET['delete']); //is this real?
         $result =  db_query("DELETE FROM admin_announcements WHERE id='$id'", $mysqlMainDb);
         $message = $langAdminAnnDel;
 } elseif (isset($_GET['modify'])) {
         // modify announcement command
-        $id = intval($_GET['modify']);
+        $id = intval($_GET['modify']); //omagad
         $result = db_query("SELECT * FROM admin_announcements WHERE id='$id'", $mysqlMainDb);
         $myrow = mysql_fetch_array($result);
 
@@ -93,24 +93,34 @@ if (isset($_GET['delete'])) {
                 $displayAnnouncementList = true;
         }
 } elseif (isset($_POST['submitAnnouncement'])) {
+
+        // Didnt last long
+        $mysqli = new mysqli($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $mysqlMainDb);
+
 	// submit announcement command
         if (isset($_POST['id'])) {
                 // modify announcement
                 $id = intval($_POST['id']);
-                db_query("UPDATE admin_announcements
-                        SET gr_title = $title, gr_body = $newContent, gr_comment = $comment,
-                        en_title = $title_en, en_body = $newContent_en, en_comment = $comment_en,
-                        visible = '$visible', date = NOW()
-                        WHERE id = $id", $mysqlMainDb);
+                $stmt = $mysqlMainDb->prepare("UPDATE admin_announcements
+                        SET gr_title = ?, gr_body = ?, gr_comment = ?,
+                        en_title = ?, en_body = ?, en_comment = ?,
+                        visible = ?, date = NOW()
+                        WHERE id = ?");
+                $stmt->bind_param("sssssssi", $title, $newContent, $comment, $title_en, $newContent_en, $comment_en, $visible, $id);
+                $stmt->execute();
                 $message = $langAdminAnnModify;
         } else {
                 // add new announcement
-                db_query("INSERT INTO admin_announcements
-                        SET gr_title = $title, gr_body = $newContent, gr_comment = $comment,
-                        en_title = $title_en, en_body = $newContent_en, en_comment = $comment_en,
-                        visible = '$visible', date = NOW()");
+                $stmt = $mysqlMainDb->prepare("INSERT INTO admin_announcements
+                        SET gr_title = ?, gr_body = ?, gr_comment = ?,
+                        en_title = ?, en_body = ?, en_comment = ?,
+                        visible = ?, date = NOW()");
+                $stmt->bind_param("sssssss", $title, $newContent, $comment, $title_en, $newContent_en, $comment_en, $visible);
+                $stmt->execute();
                 $message = $langAdminAnnAdd;
         }
+        $stmt->close();
+        $mysqli->close();
 }
 
 // action message
@@ -134,13 +144,38 @@ if ($displayForm && (@$addAnnouce==1 || isset($modify))) {
         }
         $tool_content .= "</b></td></tr>";
 
-        if (!isset($contentToModify))	$contentToModify ="";
-        if (!isset($titleToModify))	$titleToModify ="";
-        if (!isset($commentToModify))	$commentToModify ="";
+        // Do we need to sanitize here? they get empty string'ed
+        // ow, but if they are set nothing happens.
+        if (isset($contentToModify))
+                $contentToModify = htmlspecialchars($contentToModify);
+        else 
+                $contentToModify ="";
+
+        if (isset($titleToModify))
+                $titleToModify = htmlspecialchars($titleToModify);
+        else 
+                $titleToModify ="";
+
+        if (isset($commentToModify))
+                $commentToModify = htmlspecialchars($commentToModify);
+        else 
+                $commentToModify ="";
+
         // english
-        if (!isset($contentToModifyEn))	$contentToModifyEn ="";
-        if (!isset($titleToModifyEn))	$titleToModifyEn ="";
-        if (!isset($commentToModifyEn))	$commentToModifyEn ="";
+        if (isset($contentToModifyEn))
+                $contentToModifyEn = htmlspecialchars($contentToModifyEn);
+        else 
+                $contentToModifyEn ="";
+
+        if (isset($titleToModifyEn))
+                $titleToModifyEn = htmlspecialchars($titleToModifyEn);
+        else 
+                $titleToModifyEn ="";
+
+        if (isset($commentToModifyEn))
+                $commentToModifyEn = htmlspecialchars($commentToModifyEn);
+        else 
+                $commentToModifyEn ="";
 
         $checked = (isset($visibleToModify) and $visibleToModify == 'V')? " checked='1'": '';
         $tool_content .= "

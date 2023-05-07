@@ -91,10 +91,22 @@ elseif (isset($submit) && isset($changePass) && ($changePass == "do")) {
 		draw($tool_content, 3);
 		exit();
 	}
+
 	//all checks ok. Change password!
-	$sql = "SELECT `password` FROM `user` WHERE `user_id`='$userid'";
-	$result = db_query($sql, $mysqlMainDb);
-	$myrow = mysql_fetch_array($result);
+	$mysqli = new mysqli($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $mysqlMainDb);
+	$stmt = $mysqli->prepare("SELECT cours.code k, cours.fake_code fc,
+		cours.intitule i, cours.titulaires t
+	                        FROM cours, cours_user
+	                        WHERE cours.cours_id = cours_user.cours_id
+	                        AND cours_user.user_id = ?");
+	$stmt->bind_param("i", $uid);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	//$sql = "SELECT `password` FROM `user` WHERE `user_id`='$userid'";
+	//$result = db_query($sql, $mysqlMainDb);
+	
+	$myrow = $stmt->fetch_array();
+
 	$old_pass_db = $myrow['password'];
 	$new_pass = md5($_REQUEST['password_form']);
 	$sql = "UPDATE `user` SET `password` = '$new_pass' WHERE `user_id` = '$userid'";

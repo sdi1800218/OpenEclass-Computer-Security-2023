@@ -82,7 +82,7 @@ if($submit) {
 			<br><br><p align='right'><a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "'>$langAgain</a></p>";
 	} else {
   
-		$registered_a = time();
+		$registered_at = time();
 		$expires_at = time() + $durationAccount;
 		$password_encrypted = md5($password);
 		
@@ -94,7 +94,6 @@ if($submit) {
 		}
 
 		// Sanitize the variables by removing any harmful characters
-		// TODO: this is better than the other approaches
 		$nom_form = filter_var($nom_form, FILTER_SANITIZE_STRING);
 		$prenom_form = filter_var($prenom_form, FILTER_SANITIZE_STRING);
 		$uname = filter_var($uname, FILTER_SANITIZE_STRING);
@@ -115,7 +114,7 @@ if($submit) {
 		// Execute the SQL statement
 		$stmt->execute();
 
-		echo "New record created successfully";
+		//echo "New record created successfully";
 
 		// Close the statement and connection
 		$stmt->close();
@@ -166,7 +165,7 @@ $langEmail : $emailhelpdesk
 
 		// Check connection
 		if ($mysqli->connect_error) {
-			die("Connection failed: " . $conn->connect_error);
+			die("Connection failed: " . $mysqli->connect_error);
 		}
 
 		// Prepare the SQL statement
@@ -196,7 +195,7 @@ $langEmail : $emailhelpdesk
 		$stmt->close();
 		$mysqli->close();
 
-	} elseif (@$_GET['type'] == 'user') {
+		} else if (@$_GET['type'] == 'user') {
                 $pstatut = 5;
         } else {
                 $pstatut = 1;

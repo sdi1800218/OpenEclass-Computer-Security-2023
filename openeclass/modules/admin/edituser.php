@@ -286,74 +286,78 @@ $tool_content .= "
 				$tool_content .= $langCannotDeleteAdmin;
 			}
 		}
-	}  else { // if the form was submitted then update user
+	} else { // if the form was submitted then update user
 
 		// get the variables from the form and initialize them
 		$fname = isset($_POST['fname'])?$_POST['fname']:'';
 		$lname = isset($_POST['lname'])?$_POST['lname']:'';
 
 		// trim white spaces in the end and in the beginning of the word
-		$username = preg_replace('/\ +/', ' ', trim(isset($_POST['username'])?$_POST['username']:''));
-		$email = isset($_POST['email'])?$_POST['email']:'';
-		$phone = isset($_POST['phone'])?$_POST['phone']:'';
-		$am = isset($_POST['am'])?$_POST['am']:'';
-		$department = isset($_POST['department'])?$_POST['department']:'NULL';
-		$newstatut = isset($_POST['newstatut'])?$_POST['newstatut']:'NULL';
-		$registered_at = isset($_POST['registered_at'])?$_POST['registered_at']:'';
-		$date = isset($_POST['date'])?$_POST['date']:'';
-		$hour = isset($_POST['hour'])?$_POST['hour']:'';
-		$minute = isset($_POST['minute'])?$_POST['minute']:'';
+		// let's hope this works
+		$username = filter_var(preg_replace('/\ +/', ' ', trim(isset($_POST['username'])?$_POST['username']:'')), FILTER_SANITIZE_STRING);
+		$email = filter_var(isset($_POST['email'])?$_POST['email']:'', FILTER_SANITIZE_EMAIL);
+		$phone = filter_var(isset($_POST['phone'])?$_POST['phone']:'', FILTER_SANITIZE_STRING);
+		$am = filter_var(isset($_POST['am'])?$_POST['am']:'', FILTER_SANITIZE_STRING);
+		$department = filter_var(isset($_POST['department'])?$_POST['department']:'NULL', FILTER_SANITIZE_STRING);
+		$newstatut = filter_var(isset($_POST['newstatut'])?$_POST['newstatut']:'NULL', FILTER_SANITIZE_STRING);
+		$registered_at = filter_var(isset($_POST['registered_at'])?$_POST['registered_at']:'', FILTER_SANITIZE_STRING);
+		$date = filter_var(isset($_POST['date'])?$_POST['date']:'', FILTER_SANITIZE_STRING);
+		$hour = filter_var(isset($_POST['hour'])?$_POST['hour']:'', FILTER_SANITIZE_NUMBER_INT);
+		$minute = filter_var(isset($_POST['minute'])?$_POST['minute']:'', FILTER_SANITIZE_NUMBER_INT);	
+
+		// parse dates
 		$date = explode("-",  $date);
-    		$day=$date[0];
-    		$year=$date[2];
-    		$month=$date[1];
+		$day=$date[0];
+		$year=$date[2];
+		$month=$date[1];
+
 		$expires_at = mktime($hour, $minute, 0, $month, $day, $year);
 		$user_exist= FALSE;
 		// check if username is free
   		$username_check=mysql_query("SELECT username FROM user WHERE username='".escapeSimple($username)."'");
 		$nums = mysql_num_rows($username_check);
 
-if (mysql_num_rows($username_check) > 1) {
+		if (mysql_num_rows($username_check) > 1) {
 		    $user_exist = TRUE;
-	  }
+	  	}
 
-  // check if there are empty fields
-  if (empty($fname) OR empty($lname) OR empty($username)) {
-	$tool_content .= "<table width='99%'><tbody><tr>
-        <td class='caution' height='60'><p>$langEmptyFields</p>
-	<p><a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "'>$langAgain</a></p></td></tr></tbody></table><br /><br />";
-	draw($tool_content, 3, ' ', $head_content);
-	    exit();
-	}
- 	 elseif(isset($user_exist) AND $user_exist == TRUE) {
-		$tool_content .= "<table width='99%'><tbody><tr>
-          	<td class='caution' height='60'><p>$langUserFree</p>
-		<p><a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "'>$langAgain</a></p></td></tr></tbody></table><br /><br />";
-		draw($tool_content, 3, ' ', $head_content);
-	    exit();
-  }
+		// check if there are empty fields
+		if (empty($fname) OR empty($lname) OR empty($username)) {
+			$tool_content .= "<table width='99%'><tbody><tr>
+				<td class='caution' height='60'><p>$langEmptyFields</p>
+			<p><a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "'>$langAgain</a></p></td></tr></tbody></table><br /><br />";
+			draw($tool_content, 3, ' ', $head_content);
+			exit();
+		}
+		elseif(isset($user_exist) AND $user_exist == TRUE) {
+			$tool_content .= "<table width='99%'><tbody><tr>
+				<td class='caution' height='60'><p>$langUserFree</p>
+			<p><a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "'>$langAgain</a></p></td></tr></tbody></table><br /><br />";
+			draw($tool_content, 3, ' ', $head_content);
+			exit();
+		}
 		if($registered_at>$expires_at) {
 			$tool_content .= "<center><br><b>$langExpireBeforeRegister<br><br><a href=\"edituser.php?u=".$u."\">$langAgain</a></b><br />";
 		} else {
 			if ($u=='1') $department = 'NULL';
 			$sql = "UPDATE user SET nom = ".autoquote($lname).", prenom = ".autoquote($fname).",
-				username = ".autoquote($username).", email = ".autoquote($email).", 
-				statut = ".intval($newstatut).", phone=".autoquote($phone).",
-				department = ".intval($department).", expires_at=".$expires_at.",
-                                am = ".autoquote($am)." WHERE user_id = ".intval($u);
+					username = ".autoquote($username).", email = ".autoquote($email).", 
+					statut = ".intval($newstatut).", phone=".autoquote($phone).",
+					department = ".intval($department).", expires_at=".$expires_at.",
+					am = ".autoquote($am)." WHERE user_id = ".intval($u);
 			$qry = db_query($sql);
-                        if (!$qry) {
-                                $tool_content .= "$langNoUpdate:".$u."!";
-                        } else {
-                                $num_update = mysql_affected_rows();
-                                if ($num_update == 1) {
-                                        $tool_content .= "<center><br /><b>$langSuccessfulUpdate</b><br><br />";
-                                } else {
-                                        $tool_content .= "<center><br /><b>$langUpdateNoChange</b><br><br />";
-                                }
-                        }
-                        $tool_content .= "<a href='listusers.php'>$langBack</a></center>";
-                }
+			if (!$qry) {
+					$tool_content .= "$langNoUpdate:".$u."!";
+			} else {
+					$num_update = mysql_affected_rows();
+					if ($num_update == 1) {
+							$tool_content .= "<center><br /><b>$langSuccessfulUpdate</b><br><br />";
+					} else {
+							$tool_content .= "<center><br /><b>$langUpdateNoChange</b><br><br />";
+					}
+			}
+			$tool_content .= "<a href='listusers.php'>$langBack</a></center>";
+		}
 	}
 }
 else
