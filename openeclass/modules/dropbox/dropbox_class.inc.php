@@ -160,8 +160,8 @@ class Dropbox_Work {
 		*/
 		$sql="INSERT INTO `".$dropbox_cnf["personTbl"]."` 
 				(fileId, personId)
-				VALUES ('".addslashes($this->id)."'
-						, '".addslashes($this->uploaderId)."'
+				VALUES ('".mysql_real_escape_string($this->id)."'
+						, '".mysql_real_escape_string($this->uploaderId)."'
 						)";
         $result = db_query($sql);	//if work already exists no error is generated
 	}

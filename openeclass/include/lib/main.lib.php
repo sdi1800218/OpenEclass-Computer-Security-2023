@@ -992,8 +992,10 @@ function cp737_to_utf8($s)
 // Return a new random filename, with the given extension
 function safe_filename($extension = '')
 {
-        $prefix = sprintf('%08x', time()) . randomkeys(4);
-        if (empty($extension)) {
+        $prefix_temp = openssl_random_pseudo_bytes(16);
+		$prefix = bin2hex($prefix_temp);
+
+		if (empty($extension)) {
                 return $prefix;
         } else {
                 return $prefix . '.' . $extension;

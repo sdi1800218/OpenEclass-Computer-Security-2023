@@ -116,7 +116,11 @@ header("Content-Length: " . filesize( $path)."\n" );
  * SEND FILE
  * ========================================
  */
+// PROTEC
+chmod($path, 0644);
 $fp = fopen($path, "rb");
 fpassthru($fp);
-exit( );
+
+chmod($path, 0222);
+exit();
 ?>

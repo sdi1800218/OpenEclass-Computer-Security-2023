@@ -121,7 +121,7 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 						include "include/alt_login.php";
 					}
 				} else {
-					$tool_content .= "<br>$langInvalidAuth<br>";
+					$tool_content .= "<br> " . $langInvalidAuth . "<br>";
 				}
 			}
 		}
@@ -153,7 +153,7 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 			$_SESSION['is_admin'] = $is_admin;
 			$_SESSION['uid'] = $uid;
 			mysql_query("INSERT INTO loginout (loginout.idLog, loginout.id_user, loginout.ip, loginout.when, loginout.action)
-			VALUES ('', '$uid', '$_SERVER[REMOTE_ADDR]', NOW(), 'LOGIN')");
+			VALUES ('', '". intval($uid) . "', '$_SERVER[REMOTE_ADDR]', NOW(), 'LOGIN')");
 		}
 	
 		##[BEGIN personalisation modification]############

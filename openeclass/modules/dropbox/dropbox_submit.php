@@ -164,18 +164,20 @@ if (!isset( $_POST['authors']) || !isset( $_POST['description']))
 		}
 
 		if (!$error) {
+			// set author
+			$dropbox_filename = filter_var($dropbox_filename, FILTER_SANITIZE_STRING);
+			$authoria = filter_var($_POST['authors'], FILTER_SANITIZE_STRING);
+			$description = filter_var($_POST['description'], FILTER_SANITIZE_STRING);
+
 			// set title
 			$dropbox_title = $dropbox_filename;
 			$format = get_file_extension($dropbox_filename);
-            $dropbox_filename = safe_filename($format); // TODO
+			
+			// should I troll this prefix?
+			$dropbox_filename = safe_filename("txt");
 
 			// Transform any .php file in .phps fo security
 			// $dropbox_filename = php2phps ($dropbox_filename); WTF
-			// TODO: Handle files to avoid RFI
-			
-			// set author
-			$authoria = filter_var($_POST['authors'], FILTER_SANITIZE_STRING);
-			$description = filter_var($_POST['description'], FILTER_SANITIZE_STRING);
 
 			if ($authoria == '')
 			{
@@ -205,7 +207,7 @@ if (!isset( $_POST['authors']) || !isset( $_POST['description']))
 			{
 				move_uploaded_file($dropbox_filetmpname, $dropbox_cnf["sysPath"] . '/' . $dropbox_filename)
 								or die($dropbox_lang["uploadError"]);
-				// TODO
+				chmod($dropbox_cnf["sysPath"] . '/' . $dropbox_filename, 0222);
 				new Dropbox_SentWork($uid, $dropbox_title, $description, $authoria, $dropbox_filename, $dropbox_filesize, $newWorkRecipients);
 			}
 		}
@@ -388,6 +390,7 @@ if (isset($_GET['mailingIndex']))  // examine or send
 			}
 
 			// find student course members not among the recipients
+			$students = mysql_real_escape_string($students);
 			$sql = "SELECT u.nom, u.prenom
 					FROM `".$mysqlMainDb."`.`cours_user` cu
 					LEFT JOIN  `".$mysqlMainDb."`.`user` u
