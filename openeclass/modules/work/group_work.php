@@ -201,24 +201,25 @@ $tool_content .= "
 
 
 // Insert a group work submitted by user uid to assignment id
+// TODO
 function submit_work($uid, $id, $file) {
 	global $groupPath, $langUploadError, $langUploadSuccess,
 		$langBack, $m, $currentCourseID, $tool_content, $workPath;
 
 	$group = user_group($uid);
 
-        $ext = get_file_extension($file);
+    $ext = get_file_extension($file);
 	$local_name = greek_to_latin('Group '. $group . (empty($ext)? '': '.' . $ext));
 
-        $r = mysql_fetch_row(db_query('SELECT filename FROM group_documents WHERE path = ' .
+    $r = mysql_fetch_row(db_query('SELECT filename FROM group_documents WHERE path = ' .
                                       autoquote($file)));
-        $original_filename = $r[0];
+    $original_filename = $r[0];
 
 	$source = $groupPath.$file;
 	$destination = work_secret($id)."/$local_name";
 
 
-        delete_submissions_by_uid($uid, $group, $id, $destination);
+    delete_submissions_by_uid($uid, $group, $id, $destination);
 	if (copy($source, "$workPath/$destination")) {
 		db_query("INSERT INTO assignment_submit (uid, assignment_id, submission_date,
 			             submission_ip, file_path, file_name, comments, group_id)

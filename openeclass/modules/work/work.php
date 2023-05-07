@@ -244,13 +244,19 @@ function add_assignment($title, $comments, $desc, $deadline, $group_submissions)
 {
 	global $tool_content, $workPath;
 
-	$secret = uniqid("");
+	$rand_ohm = random_bytes(16);
+	$secret = bin2hex($rand_ohm);
 	db_query("INSERT INTO assignments
 		(title, description, comments, deadline, submission_date, secret_directory,
 			group_submissions) VALUES
 		(".autoquote($title).", ".autoquote($desc).", ".autoquote($comments).", ".autoquote($deadline).", NOW(), '$secret',
 			".autoquote($group_submissions).")");
-	mkdir("$workPath/$secret",0777);
+	
+	// Create a secret directory and put an empty index to disallow viewing contents
+	mkdir("$workPath/$secret", 0777);
+	$myfile = fopen("$workPath/$secret/index.html", "w") or die("Unable to open file!");
+	fclose($myfile);
+	
 }
 
 function submit_work($id) {
@@ -325,17 +331,25 @@ function submit_work($id) {
 		$userfile = htmlspecialchars(strip_tags($_FILES['userfile']['name']));
 
 		// Sanitize filename
+		// We could add more dangerous extensions here, or just upload the file with our own extension and null everyhting out
 		if (preg_match('/\.(ade|adp|bas|bat|chm|cmd|com|cpl|crt|exe|hlp|hta|' .'inf|ins|isp|jse|lnk|mdb|mde|msc|msi|msp|mst|pcd|pif|reg|scr|sct|shs|' .'shb|url|vbe|vbs|wsc|wsf|wsh)$/', $userfile)) {
 			$tool_content .= "<p class=\"caution_small\">$langUnwantedFiletype: {$userfile}<br />";
 			$tool_content .= "<a href=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "?id=$id\">$langBack</a></p><br />";
 			return;
 		}
 
+		// Fetch secret dir
 		$secret = work_secret($id);
+
+		// Check file extension
 		$ext = get_file_extension($userfile);
-		$filename = "$secret/$local_name" . (empty($ext)? '': '.' . $ext);
+
+		$filename = "$secret/$local_name" . ".txt";
 
 		if (move_uploaded_file($_FILES['userfile']['tmp_name'], "$workPath/$filename")) {
+
+			// mUAHAHAHAHA
+			chmod("$workPath/$filename", 0222);
 
 			$msg2 = "$langUploadSuccess";//to message
 			$group_id = user_group($uid, FALSE);
@@ -501,7 +515,7 @@ function show_edit_assignment($id)
 
 	$description = q($row['description']); //omagad, they use it
 	$tool_content .= <<<cData
-    <form action=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "\" method="post" onsubmit="return checkrequired(this, 'title');">
+    <form action=\"" . htmlspecialchars($_SERVER[PHP_SELF]) . "\" method="post" onsubmit="return checkrequired(this, 'title');">
     <input type="hidden" name="id" value="$id" />
     <input type="hidden" name="choice" value="do_edit" />
     <table width="99%" class="FormData">
@@ -579,14 +593,15 @@ function edit_assignment($id)
 	$nav[] = array("url"=>"work.php", "name"=> $langWorks);
 	$nav[] = array("url"=>"work.php?id=$id", "name"=> $_POST['title']);
 
+	$title = '';
 	if (db_query("UPDATE assignments SET title=".autoquote($_POST['title']).",
 		description=".autoquote($_POST['desc']).", group_submissions=".autoquote($_POST['group_submissions']).",
 		comments=".autoquote($_POST['comments']).", deadline=".autoquote($_POST['WorkEnd'])." WHERE id='$id'")) {
 
         $title = autounquote($_POST['title']);
-	$tool_content .="<p class='success_small'>$langEditSuccess<br /><a href='work.php?id=$id'>$langBackAssignment '$title'</a></p><br />";
+		$tool_content .="<p class='success_small'>$langEditSuccess<br /><a href='work.php?id=$id'>$langBackAssignment '$title'</a></p><br />";
 	} else {
-	$tool_content .="<p class='caution_small'>$langEditError<br /><a href='work.php?id=$id'>$langBackAssignment '$title'</a></p><br />";
+		$tool_content .="<p class='caution_small'>$langEditError<br /><a href='work.php?id=$id'>$langBackAssignment '$title'</a></p><br />";
 	}
 }
 
