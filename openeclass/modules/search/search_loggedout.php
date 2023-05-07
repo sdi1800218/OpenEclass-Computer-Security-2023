@@ -173,11 +173,11 @@ $search_terms_coursecode ="";
 function match_arrays($search_terms_array, $mycours_string)
 {
 	//elegxos gia to an yparxoun apotelesmata sthn trexousa grammh toy $mycours_array
-		if(!empty($search_terms_array) || $search_terms_array != "" || !empty($mycours_string) || $mycours_string != "")
-		{
-			$ret = my_stripos($mycours_string, $search_terms_array);
-			if($ret !== FALSE) return TRUE;
-		}
+	if(!empty($search_terms_array) || $search_terms_array != "" || !empty($mycours_string) || $mycours_string != "")
+	{
+		$ret = my_stripos($mycours_string, $search_terms_array);
+		if($ret !== FALSE) return TRUE;
+	}
 
 	return FALSE;
 }
@@ -186,9 +186,9 @@ function match_arrays($search_terms_array, $mycours_string)
 function my_stripos($string, $word)
 {
 	$source = array('ά', 'έ', 'ή', 'ί', 'ύ', 'ό', 'ώ', 'ϊ', 'ϋ', 'ΐ', 'ΰ');
-      $target = array('α', 'ε', 'η', 'ι', 'υ', 'ο', 'ω', 'ι', 'υ', 'ι', 'υ');
+    $target = array('α', 'ε', 'η', 'ι', 'υ', 'ο', 'ω', 'ι', 'υ', 'ι', 'υ');
 
-      return strpos(
-	str_replace($source, $target, mb_strtolower($string, 'UTF-8')),
-	str_replace($source, $target, mb_strtolower($word, 'UTF-8')));
+    return strpos(
+		str_replace($source, $target, mb_strtolower($string, 'UTF-8')),
+		str_replace($source, $target, mb_strtolower($word, 'UTF-8')));
 }

@@ -91,7 +91,7 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
 
 	//ektelesh erwthmatos gia to se poia mathimata einai eggegramenos o xrhsths. sta apotelesmata perilamvanontai
 	//kai ola ta anoixta kai anoixta me eggrafh mathimata.
-
+	$uid = intval($uid); // better safe than sorry
 	$result = mysql_query("SELECT DISTINCT * FROM (
 		SELECT  cours.code, cours.intitule, cours.course_keywords, cours.titulaires
 		FROM cours, cours_user  WHERE cours.cours_id = cours_user.cours_id AND cours_user.user_id = $uid
@@ -149,22 +149,22 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
     if($results_found == 0) {
         $tool_content .= "\n<br />    \n    <p class=\"alert1\">$langNoResult</p>";
     } else {
-    $tool_content .= "
-    <table width=\"99%\" class=\"Search\" align=\"left\">
-    <tbody>
-    <tr class=\"odd\">
-      <td colspan=\"4\">$langDoSearch:&nbsp;<b>$langResults</b></td>
-    </tr>
-    <tr>
-      <th width=\"1%\">&nbsp;</th>
-      <th width=\"40%\"><div align=\"left\">".$langCourse." ($langCode)</div></th>
-      <th width=\"30%\"><div align=\"left\">$langTeacher</div></th>
-      <th width=\"30%\"><div align=\"left\">$langKeywords</div></th>
-    </tr>";
-    $tool_content .=  $tbl_content;
-    $tool_content .= "\n    </tbody>";
-    $tool_content .= "\n    </table>";
-}
+		$tool_content .= "
+		<table width=\"99%\" class=\"Search\" align=\"left\">
+		<tbody>
+		<tr class=\"odd\">
+		<td colspan=\"4\">$langDoSearch:&nbsp;<b>$langResults</b></td>
+		</tr>
+		<tr>
+		<th width=\"1%\">&nbsp;</th>
+		<th width=\"40%\"><div align=\"left\">".$langCourse." ($langCode)</div></th>
+		<th width=\"30%\"><div align=\"left\">$langTeacher</div></th>
+		<th width=\"30%\"><div align=\"left\">$langKeywords</div></th>
+		</tr>";
+		$tool_content .= $tbl_content;
+		$tool_content .= "\n    </tbody>";
+		$tool_content .= "\n    </table>";
+	}
     //ektypwsh syndesmou gia nea anazhthsh
     //$tool_content .= "<p align=\"center\"><a href=\"search.php\">$langNewSearch</a></p>";
 
