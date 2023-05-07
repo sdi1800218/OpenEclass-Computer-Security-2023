@@ -362,7 +362,7 @@ function submit_work($id) {
 				//	"', '$stud_comments', '$group_id')", $currentCourseID);
 				$stmt->close();
 			} else {
-				$stmt = $conn->prepare("INSERT INTO assignment_submit
+				$stmt = $mysqli->prepare("INSERT INTO assignment_submit
                                (uid, assignment_id, submission_date, submission_ip,
 							   file_path, file_name, comments)
 							   VALUES (?,?, NOW(),?, ?,?,?)");
@@ -382,11 +382,11 @@ function submit_work($id) {
 
 			$tool_content .="<p class='success_small'>$msg2<br />$msg1<br /><a href='work.php'>$langBack</a></p><br />";
 		} else {
-		$tool_content .="    <p class='caution_small'>$langUploadError<br /><a href='work.php'>$langBack</a></p><br />";
+			$tool_content .="    <p class='caution_small'>$langUploadError<br /><a href='work.php'>$langBack</a></p><br />";
 		}
 
   } else { // not submit_ok
-  	$tool_content .="<p class=\"caution_small\">$langExerciseNotPermit<br /><a href='work.php'>$langBack</a></p></br>";
+  		$tool_content .="<p class=\"caution_small\">$langExerciseNotPermit<br /><a href='work.php'>$langBack</a></p></br>";
   }
 }
 
@@ -499,7 +499,7 @@ function show_edit_assignment($id)
 	$deadline = $row['deadline'];
 
 
-	$description = q($row['description']);
+	$description = q($row['description']); //omagad, they use it
 	$tool_content .= <<<cData
     <form action=\"" . htmlspecialchars($_SERVER['PHP_SELF']) . "\" method="post" onsubmit="return checkrequired(this, 'title');">
     <input type="hidden" name="id" value="$id" />
@@ -553,7 +553,7 @@ cData;
         	$tool_content .= " checked='1' />";
 	} else {
                 $tool_content .= " />";
-        }
+    }
 	$tool_content .= $m['group_work']."</td>
     </tr>
     <tr>
@@ -571,6 +571,7 @@ cData;
 }
 
 // edit assignment
+// TODO: maybe sanitize this one too
 function edit_assignment($id)
 {
 	global $tool_content, $langBackAssignment, $langEditSuccess, $langEditError, $langWorks, $langEdit;

@@ -90,10 +90,21 @@ if (isset($_POST['submit'])) {
 
                 list($facid, $facname) = explode('--', $_POST['facu']);
 
+                $title = htmlspecialchars(strip_tags($_POST['title']));
+                $facname = htmlspecialchars(strip_tags($facname));
+                $description = htmlspecialchars(strip_tags($_POST['description']));
+                $course_addon = htmlspecialchars(strip_tags($_POST['course_addon']));
+                $course_keywords = htmlspecialchars(strip_tags($_POST['course_keywords']));
+                $formvisible = intval($_POST['formvisible']);
+                $titulary = htmlspecialchars(strip_tags($_POST['titulary']));
+                $type = htmlspecialchars(strip_tags($_POST['type']));
+                $password = htmlspecialchars(strip_tags($_POST['password']));
+                $facid = intval($facid);                
+
                 // hope this works
                 $mysqli = new mysqli($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $mysqlMainDb);
                 
-                $stmt = $conn->mysqli("UPDATE cours
+                $stmt = $mysqli->prepare("UPDATE cours
                         SET intitule = ?, faculte = ?,
                              description = ?, course_addon = ?,
                              course_keywords = ?, visible = ?,
@@ -101,20 +112,21 @@ if (isset($_POST['submit'])) {
                              type = ?, password = ?, faculteid = ?
                         WHERE cours_id = ?");
                 $stmt->bind_param("sssssissssii",
-                        htmlspecialchars(strip_tags($_POST['title'])),
-                        htmlspecialchars(strip_tags($facname)),
-                        htmlspecialchars(strip_tags($_POST['description'])),
-                        htmlspecialchars(strip_tags($_POST['course_addon'])),
-                        htmlspecialchars(strip_tags($_POST['course_keywords'])),
-                        intval($_POST['formvisible']),
-                        htmlspecialchars(strip_tags($_POST['titulary'])),
+                        $title,
+                        $facname,
+                        $description,
+                        $course_addon,
+                        $course_keywords,
+                        $formvisible,
+                        $titulary,
                         $newlang,
-                        htmlspecialchars(strip_tags($_POST['type'])),
-                        htmlspecialchars(strip_tags($_POST['password'])),
-                        intval($facid),
+                        $type,
+                        $password,
+                        $facid,
                         $cours_id);
                 
                 $stmt->execute();
+
                 $stmt->close();
                 $mysqli->close();
 
