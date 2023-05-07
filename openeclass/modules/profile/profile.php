@@ -82,18 +82,49 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
 		$_SESSION['langswitch'] = $language = langcode_to_name($_REQUEST['userLanguage']);
 		$langcode = langname_to_code($language);
 
-		$username_form = escapeSimple($username_form);
-		if(mysql_query("UPDATE user
-	        SET nom='$nom_form', prenom='$prenom_form',
-	        username='$username_form', email='$email_form', am='$am_form',
-	            perso='$persoStatus', lang='$langcode'
-	        WHERE user_id='".$_SESSION["uid"]."'")) {
+		// Create a mysqli connection
+		$mysqli = mysqli_connect($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $mysqlMainDb);
+
+		// Check connection
+		if (!$mysqli) {
+			die("Connection failed: " . mysqli_connect_error());
+		}
+
+		// Sanitize input
+		$nom_form = mysqli_real_escape_string($mysqli, $nom_form);
+		$prenom_form = mysqli_real_escape_string($mysqli, $prenom_form);
+		$username_form = mysqli_real_escape_string($mysqli, $username_form);
+		$email_form = mysqli_real_escape_string($mysqli, $email_form);
+		$am_form = mysqli_real_escape_string($mysqli, $am_form);
+		$persoStatus = mysqli_real_escape_string($mysqli, $persoStatus);
+		$langcode = mysqli_real_escape_string($mysqli, $langcode);
+
+		// Prepare and bind the query
+		$stmt = $mysqli->prepare("UPDATE user
+			SET nom=?, prenom=?,
+				username=?, email=?, am=?,
+				perso=?, lang=?
+			WHERE user_id=?");
+
+		$stmt->bind_param("sssssssi", $nom_form, $prenom_form, $username_form, $email_form, $am_form, $persoStatus, $langcode, $_SESSION["uid"]);
+
+		// Execute the query
+		if ($stmt->execute()) {
+			// Unset user_perso_active if necessary
 			if (isset($_SESSION['user_perso_active']) and $persoStatus == "no") {
-                		unset($_SESSION['user_perso_active']);
+				unset($_SESSION['user_perso_active']);
 			}
+			// Redirect to the page with a success message
 			header("location:" . htmlspecialchars($_SERVER['PHP_SELF']) . "?msg=1");
 			exit();
-	        }
+		} else {
+			// Handle the error
+			echo "Error updating record: " . $mysqli->error;
+		}
+
+		// Close the connection
+		$stmt->close();
+		$mysqli->close();
 	}
 }	// if submit
 

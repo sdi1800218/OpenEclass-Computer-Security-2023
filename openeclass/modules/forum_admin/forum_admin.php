@@ -248,6 +248,9 @@ if(isset($forumgo)) {
 
 	// forum add category
 	elseif(isset($forumcatadd)) {
+		// opa opa tinafto
+		$catagories = mysql_real_escape_string(strip_tags($catagories));
+
 		db_query("INSERT INTO catagories VALUES (NULL, '$catagories', NULL)", $currentCourseID);
 		$tool_content .= "\n<p class='success_small'>$langCatAdded<br />
 		<a href=" . htmlspecialchars($_SERVER['PHP_SELF']) . "?forumadmin=yes'>$langBack</a></p>";

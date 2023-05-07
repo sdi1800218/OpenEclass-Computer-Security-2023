@@ -58,10 +58,22 @@ if (isset($add)) {
 
 	$tool_content .= "<form method='post' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "'>";
 
-if(!isset($search_nom)) $search_nom = "";
-if(!isset($search_prenom)) $search_prenom = "";
-if(!isset($search_uname)) $search_uname = "";
-$tool_content .= <<<tCont
+	if(isset($search_nom))
+		$search_nom = htmlspecialchars($search_nom);
+	else 
+		$search_nom = "";
+	
+	if(isset($search_prenom))
+		$search_prenom = htmlspecialchars($search_prenom);
+	else
+		$search_prenom = "";
+
+	if(isset($search_uname))
+		$search_uname = htmlspecialchars($search_uname);
+	else
+		$search_uname = "";
+
+	$tool_content .= <<<tCont
 
     <table width="99%" class="FormData">
     <tbody>

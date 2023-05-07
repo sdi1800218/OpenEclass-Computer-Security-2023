@@ -45,7 +45,7 @@ if (!isset($doit) or $doit != "yes") {
         <tbody>
         <tr>
         <td class='caution_NoBorder' height='60' colspan='2'>
-                <p>$langConfirmUnregCours:</p><p> <em>".course_code_to_title($cid)."</em>&nbsp;? </p>
+                <p>$langConfirmUnregCours:</p><p> <em>" . course_code_to_title($cid)."</em>&nbsp;? </p>
                 <ul class='listBullet'>
                 <li>$langYes: 
                 <a href='" . htmlspecialchars($_SERVER['PHP_SELF']) . "?u=$uid&amp;cid=$cid&amp;doit=yes' class=mainpage>$langUnregCours</a>
@@ -62,7 +62,7 @@ if (!isset($doit) or $doit != "yes") {
                 $mysqli = new mysqli($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $mysqlMainDb);
                 
                 $stmt = $mysqli->prepare("DELETE from cours_user WHERE cours_id = (SELECT cours_id FROM cours WHERE code = ?) AND user_id= ? ");
-                $stmt->bind_param("si", $cid,$uid);
+                $stmt->bind_param("si", $cid, $uid);
                 $stmt->execute();
 
                 if ($stmt->affected_rows > 0) {
