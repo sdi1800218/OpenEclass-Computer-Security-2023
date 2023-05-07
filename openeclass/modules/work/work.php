@@ -131,7 +131,7 @@ hContent;
 //-------------------------------------------
 
 // fix me up doc
-$id = filter_var($id, FILTER_SANITIZE_NUMBER_INT); // todo: maybe this ownt work and needs intval()
+if (isset($id)) $id = mysql_escape_string($id);
 
 if ($is_adminOfCourse) {
 	if (isset($grade_comments)) {
@@ -327,8 +327,8 @@ function submit_work($id) {
 		$local_name = replace_dangerous_char($local_name);
 
 		// Sani
-		$local_name = htmlspecialchars(strip_tags($local_name));
-		$userfile = htmlspecialchars(strip_tags($_FILES['userfile']['name']));
+		$local_name = mysql_real_escape_string($local_name);
+		$userfile = mysql_real_escape_string($_FILES['userfile']['name']);
 
 		// Sanitize filename
 		// We could add more dangerous extensions here, or just upload the file with our own extension and null everyhting out
@@ -342,7 +342,7 @@ function submit_work($id) {
 		$secret = work_secret($id);
 
 		// Check file extension
-		$ext = get_file_extension($userfile);
+		//$ext = get_file_extension($userfile);
 
 		$filename = "$secret/$local_name" . ".txt";
 
@@ -353,7 +353,7 @@ function submit_work($id) {
 
 			$msg2 = "$langUploadSuccess";//to message
 			$group_id = user_group($uid, FALSE);
-			$stud_comments = htmlspecialchars(strip_tags($local_name));
+			$stud_comments = mysql_real_escape_string($local_name);
 
 			$mysqli = new mysqli($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $currentCourseID);
 

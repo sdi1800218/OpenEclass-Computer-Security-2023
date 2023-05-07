@@ -376,21 +376,21 @@ if (isset($_POST['create_course'])) {
         }
 		
 		// TODO: redirect and check above perms
-		$myfile = fopen("../../courses/$repertoire/image/index.html", "a") or die("Unable to open file!");
+		$myfile = fopen("../../courses/$repertoire/image/index.html", "w") or die("Unable to open file!");
 		fclose($myfile);
-		$myfile = fopen("../../courses/$repertoire/document/index.html", "a") or die("Unable to open file!");
+		$myfile = fopen("../../courses/$repertoire/document/index.html", "w") or die("Unable to open file!");
 		fclose($myfile);
-		$myfile = fopen("../../courses/$repertoire/dropbox/index.html", "a") or die("Unable to open file!");
+		$myfile = fopen("../../courses/$repertoire/dropbox/index.html", "w") or die("Unable to open file!");
 		fclose($myfile);
-		$myfile = fopen("../../courses/$repertoire/page/index.html", "a") or die("Unable to open file!");
+		$myfile = fopen("../../courses/$repertoire/page/index.html", "w") or die("Unable to open file!");
 		fclose($myfile);
-		$myfile = fopen("../../courses/$repertoire/work/index.html", "a") or die("Unable to open file!");
+		$myfile = fopen("../../courses/$repertoire/work/index.html", "w") or die("Unable to open file!");
 		fclose($myfile);
-		$myfile = fopen("../../courses/$repertoire/group/index.html", "a") or die("Unable to open file!");
+		$myfile = fopen("../../courses/$repertoire/group/index.html", "w") or die("Unable to open file!");
 		fclose($myfile);
-		$myfile = fopen("../../courses/$repertoire/temp/index.html", "a") or die("Unable to open file!");
+		$myfile = fopen("../../courses/$repertoire/temp/index.html", "w") or die("Unable to open file!");
 		fclose($myfile);
-		$myfile = fopen("../../courses/$repertoire/temp/scormPackages.html", "a") or die("Unable to open file!");
+		$myfile = fopen("../../courses/$repertoire/temp/scormPackages.html", "w") or die("Unable to open file!");
 		fclose($myfile);
 
         // ---------------------------------------------------------
