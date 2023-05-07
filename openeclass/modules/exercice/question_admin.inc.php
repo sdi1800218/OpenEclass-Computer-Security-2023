@@ -32,7 +32,7 @@ if(isset($usedInSeveralExercises)) {
 $tool_content .= <<<cData
 
     <h3>${questionName}</h3>
-    <form method="post" action="" . htmlspecialchars($_SERVER['PHP_SELF']) . "?modifyQuestion=${modifyQuestion}&modifyAnswers=${modifyAnswers}">
+    <form method="post" action="" . htmlspecialchars($_SERVER[PHP_SELF]) . "?modifyQuestion=${modifyQuestion}&modifyAnswers=${modifyAnswers}">
     <table width="99%">
     <tr>
 	<td>

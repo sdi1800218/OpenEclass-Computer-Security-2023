@@ -195,19 +195,19 @@ $langEmail : $emailhelpdesk
 		$stmt->close();
 		$mysqli->close();
 
-		} else if (@$_GET['type'] == 'user') {
-                $pstatut = 5;
-        } else {
-                $pstatut = 1;
-        }
+} elseif (@$_GET['type'] == 'user') {
+		$pstatut = 5;
+} else {
+		$pstatut = 1;
+}
 
-        if ($pstatut == 5) {
-                $nameTools = $langUserDetails;
-                $title = $langInsertUserInfo;
-        } else {
-                $nameTools = $langProfReg;
-                $title = $langNewProf;
-        }
+if ($pstatut == 5) {
+		$nameTools = $langUserDetails;
+		$title = $langInsertUserInfo;
+} else {
+		$nameTools = $langProfReg;
+		$title = $langNewProf;
+}
 
 	$tool_content .= "<form action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "' method='post'>
 	<table width='99%' align='left' class='FormData'>

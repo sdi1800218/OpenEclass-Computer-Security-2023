@@ -27,7 +27,7 @@
 // if we come from the home page
 if (isset($from_home) and ($from_home == TRUE) and isset($_GET['cid'])) {
         session_start();
-        $cid = htmlspecialchars($cid);
+        //$cid = htmlspecialchars($cid);
         $_SESSION['dbname'] = $cid;
 }
 $require_current_course = TRUE;
@@ -130,7 +130,7 @@ if (isset($_POST['submit'])) {
                 $stmt->close();
                 $mysqli->close();
 
-                $facname = htmlspecialchars($facname);
+                //$facname = htmlspecialchars($facname);
                 db_query("UPDATE `$mysqlMainDb`.cours_faculte
                         SET faculte = " . autoquote($facname)
                                 . ", facid = " . intval($facid)

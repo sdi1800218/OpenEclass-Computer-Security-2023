@@ -445,7 +445,7 @@ if(isset($modifyAnswers)) {
 
 	$tool_content .= <<<cData
 
-		<form method="post" action=" . htmlspecialchars($_SERVER['PHP_SELF']) . "?modifyAnswers=\${modifyAnswers}">
+		<form method="post" action=" . htmlspecialchars($_SERVER[PHP_SELF]) . "?modifyAnswers=\${modifyAnswers}">
 		<input type="hidden" name="formSent" value="1" />
 		<input type="hidden" name="nbrAnswers" value="\${nbrAnswers}" />
 	cData;
@@ -713,7 +713,7 @@ $tool_content .= "</td></tr></thead></table></form>";
 
 $tool_content .= <<<cData
 
-	<form method="post" action="" . htmlspecialchars($_SERVER['PHP_SELF']) . ""?modifyAnswers=${modifyAnswers}">
+	<form method="post" action="" . htmlspecialchars($_SERVER[PHP_SELF]) . ""?modifyAnswers=${modifyAnswers}">
 	<input type="hidden" name="formSent" value="1" />
 	<input type="hidden" name="nbrOptions" value="${nbrOptions}" />
 	<input type="hidden" name="nbrMatches" value="${nbrMatches}" />

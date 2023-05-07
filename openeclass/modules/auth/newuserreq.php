@@ -218,7 +218,7 @@ if($submit) {
       </tr></thead></table>
       <input type='hidden' name='rid' value=" . htmlspecialchars($id, ENT_QUOTES) . ">"
       ."</tbody></table></form>";
-      $tool_content .= "<center><p"
+      $tool_content .= "<center><p";
   } // end of if
 
 draw($tool_content,3, 'auth');
