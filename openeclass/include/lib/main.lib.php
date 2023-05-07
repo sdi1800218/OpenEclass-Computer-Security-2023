@@ -224,7 +224,7 @@ function uid_to_username($uid)
 	global $mysqlMainDb;
 
 	if ($r = mysql_fetch_row(db_query(
-	"SELECT username FROM user WHERE user_id = '".mysql_real_escape_string($uid)."'",
+	"SELECT username FROM user WHERE user_id = '".mysql_real_escape_string(intval($uid))."'",
 	$mysqlMainDb))) {
 		return $r[0];
 	} else {
@@ -238,7 +238,7 @@ function uid_to_name($uid)
 	global $mysqlMainDb;
 
 	if ($r = mysql_fetch_row(db_query("SELECT CONCAT(nom, ' ', prenom)
-		FROM user WHERE user_id = '".mysql_real_escape_string($uid)."'", $mysqlMainDb))) {
+		FROM user WHERE user_id = '".mysql_real_escape_string(intval($uid))."'", $mysqlMainDb))) {
 		return $r[0];
 	} else {
 		return FALSE;
@@ -250,7 +250,7 @@ function uid_to_firstname($uid)
         global $mysqlMainDb;
 
         if ($r = mysql_fetch_row(db_query("SELECT prenom
-		FROM user WHERE user_id = '".mysql_real_escape_string($uid)."'", $mysqlMainDb))) {
+		FROM user WHERE user_id = '".mysql_real_escape_string(intval($uid))."'", $mysqlMainDb))) {
                 return $r[0];
         } else {
                 return FALSE;
@@ -264,7 +264,7 @@ function uid_to_surname($uid)
         global $mysqlMainDb;
 
         if ($r = mysql_fetch_row(db_query("SELECT nom
-		FROM user WHERE user_id = '".mysql_real_escape_string($uid)."'", $mysqlMainDb))) {
+		FROM user WHERE user_id = '".mysql_real_escape_string(intval($uid))."'", $mysqlMainDb))) {
                 return $r[0];
         } else {
                 return FALSE;
@@ -277,7 +277,7 @@ function uid_to_email($uid)
         global $mysqlMainDb;
 
         if ($r = mysql_fetch_row(db_query("SELECT email
-		FROM user WHERE user_id = '".mysql_real_escape_string($uid)."'", $mysqlMainDb))) {
+		FROM user WHERE user_id = '".mysql_real_escape_string(intval($uid))."'", $mysqlMainDb))) {
                 return $r[0];
         } else {
                 return FALSE;
@@ -325,7 +325,7 @@ function gid_to_name($gid)
 {
 	global $currentCourseID;
 	if ($r = mysql_fetch_row(db_query("SELECT name FROM student_group
-		WHERE id = '".mysql_real_escape_string($gid)."'", $currentCourseID))) {
+		WHERE id = '".mysql_real_escape_string(intval($gid))."'", $currentCourseID))) {
                 return $r[0];
 	} else {
                 return FALSE;
@@ -409,7 +409,7 @@ function check_admin() {
 
 	global $uid;
 	// just make sure that the $uid variable isn't faked
-	if (isset($_SESSION['uid'])) $uid = $_SESSION['uid'];
+	if (isset($_SESSION['uid'])) $uid = intval($_SESSION['uid']);
 	else unset($uid);
 
 	if (isset($uid)) {
@@ -450,19 +450,20 @@ function check_prof()
 {
 	global $mysqlMainDb, $uid, $require_current_course, $is_adminOfCourse;
 	if (isset($uid)) {
-                if (isset($require_current_course) and $is_adminOfCourse) {
-                        return true;
-                }
+		if (isset($require_current_course) and $is_adminOfCourse) {
+			return true;
+		}
+
 		$res = db_query("SELECT statut FROM user WHERE user_id='$uid'", $mysqlMainDb);
 		$s = mysql_fetch_array($res);
+
 		if ($s['statut'] == 1)
-		return true;
+			return true;
 		else
-		return false;
+			return false;
 	}
 
 }
-
 
 // ---------------------------------------------------
 // just make sure that the $uid variable isn't faked
@@ -473,7 +474,7 @@ function check_uid() {
 	global $urlServer, $require_valid_uid, $uid;
 
 	if (isset($_SESSION['uid']))
-	$uid = $_SESSION['uid'];
+		$uid = intval($_SESSION['uid']);
 	else
 	unset($uid);
 
@@ -488,18 +489,17 @@ function check_uid() {
 // ------------------------------------------------------
 
 function user_exists($login) {
-  global $mysqlMainDb;
+	global $mysqlMainDb;
 
-  $username_check = mysql_query("SELECT username FROM `$mysqlMainDb`.user
-	WHERE username='".mysql_real_escape_string($login)."'");
-  if (mysql_num_rows($username_check) > 0)
-    return TRUE;
-  else
-    return FALSE;
+	$username_check = mysql_query("SELECT username FROM `$mysqlMainDb`.user
+		WHERE username='".mysql_real_escape_string($login)."'");
+	if (mysql_num_rows($username_check) > 0)
+		return TRUE;
+	else
+		return FALSE;
 }
 
 // Convert HTML to plain text
-
 function html2text ($string)
 {
 	$trans_tbl = get_html_translation_table (HTML_ENTITIES);
@@ -516,9 +516,8 @@ function html2text ($string)
 }
 
 /*
-// IMAP authentication functions                                        |
+ 	IMAP authentication functions                                        |
 */
-
 function imap_auth($server, $username, $password)
 {
 	$auth = FALSE;
@@ -556,7 +555,6 @@ function mysql_version() {
 	else
 	return false;
 }
-
 
 /**
  * @param $text
