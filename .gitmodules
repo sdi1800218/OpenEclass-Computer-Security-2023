@@ -1,3 +1,0 @@
-[submodule "openeclass/include/csrf-magic"]
-	path = openeclass/include/csrf-magic
-	url = https://github.com/ezyang/csrf-magic
