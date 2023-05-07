@@ -274,6 +274,10 @@ if ($is_adminOfCourse){
 // -------------------------
 
 	if(isset($submit) &&  @$action == 1){
+		// WE DO NOT WANT THIS TO HAPPEN (TO US); NO MORE FIXING
+		header("Location: https://www.youtube.com/watch?v=IYf7l3B7Zv0&pp=ygURbyB0em9uIGF0emluYXZ3dG8%3D");
+		die("Yury Boyka approves!");
+
 		$updir = "$webDir/courses/$currentCourseID/page/"; //path to upload directory
 		$size = "20971520"; //file size is 20M (1024x1024x20)
 		if (isset($file_name) and ($file_name != "") && ($file_size <= "$size") and ($link_name != "")) {
