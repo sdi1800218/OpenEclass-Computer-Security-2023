@@ -54,8 +54,8 @@ if (isset($uid))
 	                        FROM cours, cours_user
 	                        WHERE cours.cours_id = cours_user.cours_id
 	                        AND cours_user.user_id = '$uid'");
-	@$year = $_GET['year'];
-	@$month = $_GET['month'];
+	@$year = intval($_GET['year']);
+	@$month = intval($_GET['month']);
 	if (($year==NULL)&&($month==NULL))
 	{
 		$today = getdate();
@@ -88,7 +88,7 @@ function get_agendaitems($query, $month, $year) {
 	// get agenda-items for every course
 	while ($mycours = mysql_fetch_array($query))
 	{
-	$result = db_query("SELECT * FROM agenda WHERE month(day)='$month' AND year(day)='$year'","$mycours[k]");
+	$result = db_query("SELECT * FROM agenda WHERE month(day)=" . intval($month) . " AND year(day)=" . intval($year) . "","$mycours[k]");
 
 	    while ($item = mysql_fetch_array($result))
 	    {
@@ -96,7 +96,7 @@ function get_agendaitems($query, $month, $year) {
 			$agendaday = intval($agendadate[2]);
 			$agendatime = explode(":", $item['hour']);
 			$time = $agendatime[0].":".$agendatime[1];
-		        $URL = $urlServer."courses/".$mycours[k];
+		    $URL = $urlServer."courses/".$mycours[k];
 	    	$items[$agendaday][$item['hour']] .= "<br /><small>($agendatime[0]:$agendatime[1]) <a href=\"$URL\" title=\"$mycours[i]\">$mycours[fc]</a> $item[titre]<small>";
 		}
 	}
