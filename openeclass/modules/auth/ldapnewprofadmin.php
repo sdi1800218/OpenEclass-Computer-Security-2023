@@ -184,9 +184,9 @@ if ($submit)  {
 	$tool_content .= "</td></tr>
 	<tr><th>&nbsp;</th>
 	<td><input type='submit' name='submit' value='".$langSubmit."' >
-	<input type='hidden' name='auth' value='$auth' >
+	<input type='hidden' name='auth' value='" . htmlspecialchars($auth) . "' >
 	</td></tr>
-	<input type='hidden' name='rid' value='".@$id."'>
+	<input type='hidden' name='rid' value='". htmlspecialchars(@$id) ."'>
 	</tbody>
 	</table>
 	</form>";

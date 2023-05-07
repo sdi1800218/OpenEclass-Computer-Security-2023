@@ -216,7 +216,7 @@ if($submit) {
       <tr><td>&nbsp;</td>
       <td><input type=\"submit\" name=\"submit\" value=\"" . htmlspecialchars($langSubmit, ENT_QUOTES) . "\" ></td>
       </tr></thead></table>
-      <input type='hidden' name='rid' value=" . htmlspecialchars(@$id, ENT_QUOTES) . ">"
+      <input type='hidden' name='rid' value=" . htmlspecialchars($id, ENT_QUOTES) . ">"
       ."</tbody></table></form>";
       $tool_content .= "<center><p"
   } // end of if

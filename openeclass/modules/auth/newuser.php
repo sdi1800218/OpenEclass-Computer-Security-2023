@@ -93,7 +93,7 @@ if (!isset($submit)) {
 	</tr>
 	<tr>
 	<th class='left'>$langAm</th>
-	<td colspan='2' valign='top'><input type='text' name='am' value='$am' class='FormData_InputText' /></td>
+	<td colspan='2' valign='top'><input type='text' name='am' value='" . htmlspecialchars($am) . "' class='FormData_InputText' /></td>
 	</tr>
 	<tr>
 	<th class='left'>$langFaculty</th>

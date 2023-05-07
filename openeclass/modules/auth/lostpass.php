@@ -131,7 +131,8 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 } elseif (!isset($_REQUEST['do'])) {
 	/***** If valid e-mail address was entered, find user and send email *****/
 	$email = filter_var($email, FILTER_SANITIZE_EMAIL);
-	$userName = filter_var($userName, FILTER_SANITIZE_EMAIL);
+	$userName = filter_var($userName, FILTER_SANITIZE_STRING);
+
 	$res = db_query("SELECT user_id, nom, prenom, username, password, statut FROM user
 			WHERE email = '" . mysql_escape_string($email) . "'
 			AND BINARY username = '" . mysql_escape_string($userName) . "'", $mysqlMainDb);

@@ -67,21 +67,22 @@ if (isset($p) and ($p)) {
 } else {
 	$tool_content .= "<form method='post' action='ldapsearch.php'>";
 }
+
 @$tool_content .= "<table width='99%' style='border: 1px solid #edecdf;'>
 	<thead><tr><td>
 	<table width=\"99%\" class='FormData' align='left'>
 	<thead>
 	<tr>
 	<th class='left' width='220'>$langAuthUserName</th>
-	<td><input type='text' name='ldap_email' value='$ldap_email' class='FormData_InputText'></td>
+	<td><input type='text' name='ldap_email' value='" . htmlspecialchars($ldap_email) . "' class='FormData_InputText'></td>
 	</tr>
 	<tr>
 	<th class='left'>$langAuthPassword</th>
-	<td><input type='password' name='ldap_passwd' value='$ldap_passwd' class='FormData_InputText'></td>
+	<td><input type='password' name='ldap_passwd' value='" . htmlspecialchars($ldap_passwd) . "' class='FormData_InputText'></td>
 	</tr>
 	<tr><th>&nbsp;</th>
 	<td>
-	<input type='hidden' name='auth' value='".$auth."'>
+	<input type='hidden' name='auth' value='" . htmlspecialchars($auth) . "'>
 	<input type='submit' name='is_submit' value='".$langSubmit."'>
 	</td>
 	</tr>
