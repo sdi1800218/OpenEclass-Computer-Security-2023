@@ -210,31 +210,26 @@ if (!isset($submit)) {
 
 	$mysqli = new mysqli($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $mysqlMainDb);
 
-	$stmt = $mysqli->prepare("INSERT INTO `$mysqlMainDb`.user
-            (user_id, nom, prenom, username, password, email, 
-            statut, department, registered_at, expires_at, lang)
-            VALUES ('NULL', :nom, :prenom, :uname, :password_encrypted,
-            :email_form, '5', :department, :registered_at, :expires_at, :lang)");
-    
-    $inscr_user = $stmt->execute(array(
-      ':nom' => $nom_form,
-      ':prenom' => $prenom_form,
-      ':uname' => $uname,
-      ':password_encrypted' => md5($password),
-      ':email_form' => $email_form,
-      ':department' => $dep['id'],
-      ':registered_at' => time(),
-      ':expires_at' => time() + $durationAccount,
-      ':lang' => $lang
-    ));
+	$stmt = $mysqli->prepare("INSERT INTO `$mysqlMainDb`.user (user_id, nom, prenom, username,
+								password, email, statut, department, 
+								registered_at, expires_at, lang)
+								VALUES (?, ?, ?, ?, ?, ?, '5', ?, ?, ?, ?)");
+
+	$user_id = NULL;
+	$password_encrypted = md5($password);
+	$department = $dep['id'];
+	$registered_at = time();
+	$expires_at = time() + $durationAccount;
+
+	$stmt->bind_param("sssssisiis", $user_id, $nom_form, $prenom_form, $uname, $password_encrypted, $email_form, $department, $registered_at, $expires_at, $lang);
 
 	//$q1 = "INSERT INTO `$mysqlMainDb`.user
 	//(user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
 	//VALUES ('NULL', '$nom_form', '$prenom_form', '$uname', '$password_encrypted', '$email','5',
 	//	'$department','$am',".$registered_at.",".$expires_at.",'$lang')";
 
-	//$inscr_user = $stmt->execute();
-	$last_id = $stmt->insert_id();
+	$inscr_user = $stmt->execute();
+	$last_id = $stmt->insert_id;
 
 	$stmt->close();
 	$mysqli->close();

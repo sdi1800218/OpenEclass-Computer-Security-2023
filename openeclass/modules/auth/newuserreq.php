@@ -114,23 +114,26 @@ if($submit) {
 
     $mysqli = new mysqli($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $mysqlMainDb);
 
-    $stmt = $mysqli->prepare("INSERT INTO `$mysqlMainDb`.user
-            (user_id, nom, prenom, username, password, email, 
-            statut, department, registered_at, expires_at, lang)
-            VALUES ('NULL', :nom, :prenom, :uname, :password_encrypted,
-            :email_form, '5', :department, :registered_at, :expires_at, :lang)");
-    
-    $stmt->execute(array(
-      ':nom' => $nom_form,
-      ':prenom' => $prenom_form,
-      ':uname' => $uname,
-      ':password_encrypted' => md5($password),
-      ':email_form' => $email_form,
-      ':department' => $dep['id'],
-      ':registered_at' => time(),
-      ':expires_at' => time() + $durationAccount,
-      ':lang' => $lang
-    ));
+
+    $mysqli = new mysqli($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $mysqlMainDb);
+
+    $stmt = $mysqli->prepare("INSERT INTO `$mysqlMainDb`.user (user_id, nom, prenom, username,
+                  password, email, statut, department, 
+                  registered_at, expires_at, lang)
+                  VALUES (?, ?, ?, ?, ?, ?, '5', ?, ?, ?, ?)");
+  
+    $user_id = NULL;
+    $password_encrypted = md5($password);
+    $department = $dep['id'];
+    $registered_at = time();
+    $expires_at = time() + $durationAccount;
+  
+    $stmt->bind_param("sssssisiis", $user_id, $nom_form, $prenom_form, $uname, $password_encrypted, $email_form, $department, $registered_at, $expires_at, $lang);
+
+    $inscr_user = $stmt->execute();
+
+    $stmt->close();
+    $mysqli->close();
 
     $s = mysql_query("SELECT id FROM faculte WHERE name='$department'");
     $dep = mysql_fetch_array($s);
@@ -138,13 +141,6 @@ if($submit) {
     //  (user_id, nom, prenom, username, password, email, statut, department, registered_at, expires_at, lang)
     //  VALUES ('NULL', '$nom_form', '$prenom_form', '$uname', '$password_encrypted', '$email_form', '5', '$dep[id]', '$registered_at', '$expires_at', '$lang')");
 
-    // TODO: Is this really unused in the prototype?
-    $inscr_user = $stmt->execute();
-
-    $stmt->close();
-    $mysqli->close();
-
-    // close request
     $rid = intval($_POST['rid']);
     db_query("UPDATE prof_request set status = '2',
          date_closed = NOW() WHERE rid = '$rid'");
