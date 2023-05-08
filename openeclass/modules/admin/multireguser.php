@@ -169,7 +169,7 @@ function create_user($statut, $uname, $nom, $prenom, $email, $depid, $am, $phone
                 // $langAsUser;
         }
 
-        $req = db_query('SELECT * FROM user WHERE username = ' . autoquote($uname));
+        $req = db_query('SELECT * FROM user WHERE username = ' . mysql_real_escape_string($uname));
         if ($req and mysql_num_rows($req) > 0) {
                 $GLOBALS['error'] = "$GLOBALS[l_invalidname] ($uname)";
                 return false;
@@ -183,14 +183,16 @@ function create_user($statut, $uname, $nom, $prenom, $email, $depid, $am, $phone
         $req = db_query("INSERT INTO user
                                 (nom, prenom, username, password, email, statut, department, registered_at, expires_at, lang, am, phone)
                         VALUES (" .
-				autoquote($nom) . ', ' .
-				autoquote($prenom) . ', ' .
-				autoquote($uname) . ", '$password_encrypted', " .
-				autoquote($email) .
+				mysql_real_escape_string($nom) . ', ' .
+				mysql_real_escape_string($prenom) . ', ' .
+				mysql_real_escape_string($uname) . ", '$password_encrypted', " .
+				($email) .
 				", $statut, $depid, " .
                                 "$registered_at, $expires_at, '$lang', " .
-                                autoquote($am) . ', ' .
-                                autoquote($phone) . ')');
+				mysql_real_escape_string($uname) . ", '$password_encrypted', " .
+                                ($am) . ', ' .
+				mysql_real_escape_string($uname) . ", '$password_encrypted', " .
+                                ($phone) . ')');
         $id = mysql_insert_id();
 
         $emailsubject = "$langYourReg $siteName $type_message";
@@ -236,7 +238,7 @@ function create_username($statut, $depid, $nom, $prenom, $prefix)
 
 function register($uid, $course_code)
 {
-        $code = autoquote($course_code);
+        $code = mysql_real_escape_string($course_code);
         $req = db_query("SELECT code, cours_id FROM cours WHERE code=$code OR fake_code=$code");
         if ($req and mysql_num_rows($req) > 0) {
                 list($code, $cid) = mysql_fetch_row($req);

@@ -86,9 +86,9 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
 		$mysqli = mysqli_connect($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $mysqlMainDb);
 
 		// Check connection
-		if (!$mysqli) {
-			die("Connection failed: " . mysqli_connect_error());
-		}
+		//if (!$mysql) {
+		//	die("Connection failed: " . mysqli_connect_error());
+		//}
 
 		// Sanitize input
 		$nom_form = mysqli_real_escape_string($mysqli, $nom_form);

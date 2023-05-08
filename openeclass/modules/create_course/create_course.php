@@ -399,13 +399,14 @@ if (isset($_POST['create_course'])) {
 
         // ------------- update main Db------------
         mysql_select_db("$mysqlMainDb");
-		$course_addon = htmlspecialchars(strip_tags($course_addon));
-		$course_keywords = htmlspecialchars(strip_tags($course_keywords));
-		
-		$intitule =  htmlspecialchars(strip_tags($intitule));
-		$description = htmlspecialchars(strip_tags($description));
 		
 		$mysqli = new mysqli($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $mysqlMainDb);
+
+		$course_addon = mysql_real_escape_string($course_addon);
+		$course_keywords = mysql_real_escape_string($course_keywords);
+		
+		$intitule =  mysql_real_escape_string($intitule);
+		$description = mysql_real_escape_string($description);
 
 		$stmt = $mysqli->prepare("INSERT INTO cours SET
 				code = ?, languageCourse = ?,
@@ -456,7 +457,7 @@ if (isset($_POST['create_course'])) {
         $tool_content .= doImportFromBetaCMSAfterCourseCreation($repertoire, $mysqlMainDb, $webDir);
         // --------------------------------------------------
         $tool_content .= "
-                <p class=\"success_small\">$langJustCreated: &nbsp;<b>$intitule</b></p>
+                <p class=\"success_small\">$langJustCreated: &nbsp;<b>" . htmlspecialchars($intitule) . "</b></p>
                 <p><small>$langEnterMetadata</small></p><br />
                 <p align='center'>&nbsp;<a href='../../courses/$repertoire/index.php' class=mainpage>$langEnter</a>&nbsp;</p>";
 } // end of submit
