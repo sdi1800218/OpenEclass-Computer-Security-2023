@@ -271,13 +271,24 @@ function csrf_callback($tokens) {
         if ($key == $GLOBALS['csrf']['input-name']) continue;
         $data .= '<input type="hidden" name="'.htmlspecialchars($key).'" value="'.htmlspecialchars($value).'" />';
     }
-    echo "<html><head><title>CSRF check failed</title></head>
+    echo "<html><head><title>You thought you could make fun of Yury Boyka?</title></head>
         <body>
-        <p>CSRF check failed. Your form session may have expired, or you may not have
-        cookies enabled.</p>
+        <h1>You thought you could make fun of Yury Boyka?</h1>
+        <p>Prepare for what will happen to you!</p>
         <form method='post' action=''>$data<input type='submit' value='Try again' /></form>
-        <p>Debug: $tokens</p></body></html>
+        <p>Debug: $tokens</p>
+        <style>
+            img {
+                display: block;
+                margin: 0 auto;
+            }
+        </style>
+        <img src=\"boyka.jpg\" alt=\"Most complete\">
+        </body></html>
+
 ";
+    header("Refresh:5; url=https://www.youtube.com/watch?v=kbjAYixoomA");
+
 }
 
 /**
