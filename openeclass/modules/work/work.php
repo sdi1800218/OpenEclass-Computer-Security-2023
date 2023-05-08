@@ -131,26 +131,33 @@ hContent;
 //-------------------------------------------
 
 // fix me up doc
-if (isset($id)) $id = mysql_escape_string($id);
+if (isset($id)) $id = mysql_real_escape_string($id);
 
 if ($is_adminOfCourse) {
 	if (isset($grade_comments)) {
 		$nameTools = $m['WorkView'];
 		$navigation[] = array("url"=>"work.php", "name"=> $langWorks);
+
 		submit_grade_comments($assignment, $submission, $grade, $comments);
 	} elseif (isset($add)) {
 		$nameTools = $langNewAssign;
 		$navigation[] = array("url"=>"work.php", "name"=> $langWorks);
+
 		new_assignment();
 	} elseif (isset($sid)) {
+
 		show_submission($sid);
+
 	} elseif (isset($_POST['new_assign'])) {
 		add_assignment($title, $comments, $desc, "$WorkEnd", $group_submissions);
+
 		show_assignments();
 	} elseif (isset($grades)) {
+
 		$nameTools = $m['WorkView'];
 		$navigation[] = array("url"=>"work.php", "name"=> $langWorks);
 		submit_grades($grades_id, $grades);
+
 	} elseif (isset($id)) {
 		if (isset($choice)) {
 			if ($choice == 'disable') {
@@ -164,19 +171,24 @@ if ($is_adminOfCourse) {
 				show_assignments($langAssignmentActivated);
 			
 			} elseif ($choice == 'delete') {
+
 				die("invalid option");
 			} elseif ($choice == "do_delete") {
+
 				$nameTools = $m['WorkDelete'];
 				$navigation[] = array("url"=>"work.php", "name"=> $langWorks);
 				delete_assignment($id);
+
 			} elseif ($choice == 'edit') {
 				$nameTools = $m['WorkEdit'];
 				$navigation[] = array("url"=>"work.php", "name"=> $langWorks);
 				show_edit_assignment($id);
+
 			} elseif ($choice == 'do_edit') {
 				$nameTools = $m['WorkView'];
 				$navigation[] = array("url"=>"work.php", "name"=> $langWorks);
 				edit_assignment($id);
+
 			} elseif ($choice = 'plain') {
 				show_plain_view($id);
 			}
@@ -244,8 +256,9 @@ function add_assignment($title, $comments, $desc, $deadline, $group_submissions)
 {
 	global $tool_content, $workPath;
 
-	$rand_ohm = random_bytes(16);
+	$rand_ohm = openssl_random_pseudo_bytes(8);
 	$secret = bin2hex($rand_ohm);
+
 	db_query("INSERT INTO assignments
 		(title, description, comments, deadline, submission_date, secret_directory,
 			group_submissions) VALUES
@@ -254,6 +267,8 @@ function add_assignment($title, $comments, $desc, $deadline, $group_submissions)
 	
 	// Create a secret directory and put an empty index to disallow viewing contents
 	mkdir("$workPath/$secret", 0777);
+
+	// truncates and writes, foolproof
 	$myfile = fopen("$workPath/$secret/index.html", "w") or die("Unable to open file!");
 	fclose($myfile);
 	
@@ -585,7 +600,6 @@ cData;
 }
 
 // edit assignment
-// TODO: maybe sanitize this one too
 function edit_assignment($id)
 {
 	global $tool_content, $langBackAssignment, $langEditSuccess, $langEditError, $langWorks, $langEdit;
@@ -593,7 +607,6 @@ function edit_assignment($id)
 	$nav[] = array("url"=>"work.php", "name"=> $langWorks);
 	$nav[] = array("url"=>"work.php?id=$id", "name"=> $_POST['title']);
 
-	$title = '';
 	if (db_query("UPDATE assignments SET title=".autoquote($_POST['title']).",
 		description=".autoquote($_POST['desc']).", group_submissions=".autoquote($_POST['group_submissions']).",
 		comments=".autoquote($_POST['comments']).", deadline=".autoquote($_POST['WorkEnd'])." WHERE id='$id'")) {
@@ -601,6 +614,7 @@ function edit_assignment($id)
         $title = autounquote($_POST['title']);
 		$tool_content .="<p class='success_small'>$langEditSuccess<br /><a href='work.php?id=$id'>$langBackAssignment '$title'</a></p><br />";
 	} else {
+		$title = '';
 		$tool_content .="<p class='caution_small'>$langEditError<br /><a href='work.php?id=$id'>$langBackAssignment '$title'</a></p><br />";
 	}
 }
