@@ -39,7 +39,7 @@
 require_once("dropbox_init1.inc.php");
 $nameTools = $dropbox_lang["dropbox"];
 
-/*** The following is added for statistics purposes ***/
+/**** The following is added for statistics purposes ***/
 include('../../include/action.php');
 $action = new action();
 $action->record('MODULE_ID_DROPBOX');
@@ -101,10 +101,8 @@ else
 }
 $dropbox_person->orderReceivedWork ($receivedOrder);
 $dropbox_person->orderSentWork ($sentOrder);
-//this var is used to give a unique value to every
+$dropbox_unid = md5(uniqid(rand(), true));	//this var is used to give a unique value to every
 //page request. This is to prevent resubmiting data
-$dropbox_unid = md5(uniqid(rand(), true));
-// exoun katevei ta xerouvim kai tragoudoun
 
 /*
  * ========================================
@@ -139,7 +137,7 @@ tCont2;
 
 	if ($dropbox_person -> isCourseTutor || $dropbox_person -> isCourseAdmin)
 	{
-		$reciepientsSize= 5;
+		$reciepientsSize = 5;
 	}
 	else
 	{
@@ -169,9 +167,9 @@ tCont2;
 	{
 		// select all users except yourself
 		$sql = "SELECT DISTINCT u.user_id , CONCAT(u.nom,' ', u.prenom) AS name
-        	FROM `" . mysql_real_escape_string($dropbox_cnf["userTbl"]) . "` u, `" . mysql_real_escape_string($dropbox_cnf["courseUserTbl"]) . "` cu
-        	WHERE cu.cours_id = " . mysql_real_escape_string(intval($dropbox_cnf['cid'])) . "
-        	AND cu.user_id = u.user_id AND u.user_id != $uid
+        	FROM " . mysql_real_escape_string($dropbox_cnf[userTbl]) . " u, " . mysql_real_escape_string($dropbox_cnf[courseUserTbl]) . " cu
+        	WHERE cu.cours_id = " . mysql_real_escape_string(intval($dropbox_cnf[cid])) . "
+        	AND cu.user_id = u.user_id AND u.user_id != " . intval($uid). "
         	ORDER BY UPPER(u.nom), UPPER(u.prenom)";
 	}
 	/*
@@ -181,9 +179,9 @@ tCont2;
 	{
 		// select all the teachers except yourself
 		$sql = "SELECT DISTINCT u.user_id , CONCAT(u.nom,' ', u.prenom) AS name
-        	FROM `" . mysql_real_escape_string($dropbox_cnf["userTbl"]) . "` u, `" . mysql_real_escape_string($dropbox_cnf["courseUserTbl"]) . "` cu
-        	WHERE cu.cours_id = " . mysql_real_escape_string(intval($dropbox_cnf[cid])) . "
-        	AND cu.user_id = u.user_id AND (cu.statut <> 5 OR cu.tutor = 1) AND u.user_id != $uid
+        	FROM " . mysql_real_escape_string($dropbox_cnf[userTbl]) . " u, " . mysql_real_escape_string($dropbox_cnf[courseUserTbl]) . " cu
+        	WHERE cu.cours_id = " . mysql_real_escape_string(intval($dropbox_cnf['cid'])) . "
+        	AND cu.user_id = u.user_id AND (cu.statut <> 5 OR cu.tutor = 1) AND u.user_id != " . intval($uid) . "
         	ORDER BY UPPER(u.nom), UPPER(u.prenom)";
 	}
 	$result = db_query($sql);
@@ -357,7 +355,7 @@ $tool_content .= "
         </th>";
 	}
 
-	/* exoume vgalei to sort, kai to ladi mas
+	/* exoume vgalei to sort
 	$tool_content .= "
         <form class=\"sort\" name=\"formSent\" method=\"get\" action=\"index.php\">
         <span class=\"dropbox_listTitle\">".$dropbox_lang["orderBy"]."</span>

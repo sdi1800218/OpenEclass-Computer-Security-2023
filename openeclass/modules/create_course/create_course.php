@@ -375,7 +375,6 @@ if (isset($_POST['create_course'])) {
                 exit;
         }
 		
-		// TODO: redirect and check above perms
 		$myfile = fopen("../../courses/$repertoire/image/index.html", "w") or die("Unable to open file!");
 		fclose($myfile);
 		$myfile = fopen("../../courses/$repertoire/document/index.html", "w") or die("Unable to open file!");

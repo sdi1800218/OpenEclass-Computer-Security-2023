@@ -76,7 +76,7 @@ $head_content ='<script type="text/javascript">
 
 /**
  * --------------------------------------
- *       DATABASE TABLE VARIABLES
+ *       DATABASE TABLE VARIABLES
  * --------------------------------------
  */
 $dropbox_cnf["postTbl"] = "dropbox_post";
@@ -88,17 +88,12 @@ $dropbox_cnf["courseUserTbl"] = "cours_user";
 
 /**
  * --------------------------------------
- *       INITIALISE OTHER VARIABLES & CONSTANTS
+ *       INITIALISE OTHER VARIABLES & CONSTANTS
  * --------------------------------------
  */
-// TODO
-$dropbox_cnf["courseId"] = mysql_real_escape_string($currentCourseID);
-$dropbox_cnf["cid"] = mysql_real_escape_string(intval($cours_id));
-
-if(isset($currentCourseID))
-        $currentCourseID = mysql_real_escape_string(strip_tags($currentCourseID));
-//path to dropbox subdir in course containing the uploaded files
-$dropbox_cnf["sysPath"] = $webDir."courses/".$currentCourseID."/dropbox";
+$dropbox_cnf["courseId"] = $currentCourseID;
+$dropbox_cnf["cid"] = $cours_id;
+$dropbox_cnf["sysPath"] = $webDir."courses/".$currentCourseID."/dropbox"; //path to dropbox subdir in course containing the uploaded files
 if (!is_dir($dropbox_cnf["sysPath"])) {
 	mkdir($dropbox_cnf["sysPath"]);
 } 
@@ -111,7 +106,7 @@ $dropbox_cnf["allowStudentToStudent"] = false;
 
 /**
  * --------------------------------------
- * RH:   INITIALISE MAILING VARIABLES
+ * RH:   INITIALISE MAILING VARIABLES
  * --------------------------------------
  */
 $dropbox_cnf["allowMailing"] = false;  // false = no mailing functionality
@@ -125,7 +120,7 @@ $dropbox_cnf["mailingFileRegexp"] = '/^(.+)\.\w{1,4}$/';
 
 /*
  * ========================================
- *       Often used functions
+ *       Often used functions
  * ========================================
  */
 /*
@@ -136,34 +131,14 @@ function getUserNameFromId ($id)  // RH: Mailing: return 'Mailing ' + id
     global $dropbox_cnf, $dropbox_lang, $mysqlMainDb;
 
     $mailingId = $id - $dropbox_cnf["mailingIdBase"];
-    if ($mailingId > 0)
-        return $dropbox_lang["mailingAsUsername"] . $mailingId;
-
-    $mysqli = new mysqli($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $mysqlMainDb);
+    if ($mailingId > 0) return $dropbox_lang["mailingAsUsername"] . $mailingId;
 
     $sql = "SELECT CONCAT(nom,' ', prenom) AS name
-                FROM `" . $dropbox_cnf["userTbl"] . "` WHERE user_id = ?";
-    if ($stmt = $mysqli->prepare($sql)) {
-        $stmt->bind_param("i", $id);
-        $stmt->execute(); 
-        $res = $stmt->get_result();
-
-        $stmt->close();
-
-        if ($res->num_rows > 0) {
-            $row = $res->fetch_assoc();
-
-            $mysqli->close();
-
-            return stripslashes($row["name"]);
-        } else {
-        
-            $mysqli->close();
-            return FALSE;
-        }
-    } else {
-        return FALSE;
-    }
+		FROM `" . $dropbox_cnf["userTbl"] . "` WHERE user_id='" . mysql_real_escape_string(intval($id)) . "'";
+    $result = db_query($sql, $mysqlMainDb);
+    $res = mysql_fetch_array($result);
+    if ($res == FALSE) return FALSE;
+    return stripslashes($res["name"]);
 }
 
 /*
@@ -171,50 +146,34 @@ function getUserNameFromId ($id)  // RH: Mailing: return 'Mailing ' + id
 */
 function getLoginFromId ($id)
 {
-        global $dropbox_cnf, $dropbox_lang, $mysqlMainDb;
+    global $dropbox_cnf, $dropbox_lang, $mysqlMainDb;
 
-        $mysqli = new mysqli($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $mysqlMainDb);
-    
-        $sql = "SELECT username FROM `" . $dropbox_cnf["userTbl"] . "` WHERE user_id = ?";
-        if ($stmt = $mysqli->prepare($sql)) {
-            $stmt->bind_param("i", $id);
-            $stmt->execute(); 
-            $res = $stmt->get_result();
-            if ($res->num_rows > 0) {
-                $row = $res->fetch_assoc();
-                return stripslashes($row["username"]);
-            } else {
-                return FALSE;
-            }
-        } else {
-            return FALSE;
-        }
-    }
+    $sql = "SELECT username FROM `" . $dropbox_cnf["userTbl"] . "` WHERE user_id='" . mysql_real_escape_string(intval($id)) . "'";
+    $result = db_query($sql, $mysqlMainDb);
+    $res = mysql_fetch_array($result);
+    if ($res == FALSE) return FALSE;
+    return stripslashes( $res["username"]);
+}
 
 /*
 * returns boolean indicating if user with user_id=$id is a course member
 */
 function isCourseMember($id)
 {
-        global $dropbox_cnf, $dropbox_lang, $mysqlMainDb;
+    global $dropbox_cnf, $dropbox_lang, $mysqlMainDb;
 
-        $mysqli = new mysqli($GLOBALS['mysqlServer'], $GLOBALS['mysqlUser'], $GLOBALS['mysqlPassword'], $mysqlMainDb);
-    
-        $sql = "SELECT * FROM `" . $dropbox_cnf["courseUserTbl"] . "` WHERE user_id = ? AND cours_id = ?";
-        if ($stmt = $mysqli->prepare($sql)) {
-            $stmt->bind_param("iI", $id, $dropbox_cnf["cid"]);
-            $stmt->execute(); 
-            $res = $stmt->get_result();
-            if ($res->num_rows == 1) {
-                return TRUE;
-            } else {
-                return FALSE;
-            }
-        } else {
-            return FALSE;
-        }
+    $sql = "SELECT * FROM `" . $dropbox_cnf["courseUserTbl"] . "`
+		WHERE user_id = '" . mysql_real_escape_string(intval($id)) . "' AND cours_id = '" . $dropbox_cnf["cid"] . "'";
+    $result = db_query($sql, $mysqlMainDb); 
+    if (mysql_num_rows($result) == 1)
+    {
+        return TRUE;
     }
-    
+    else
+    {
+        return FALSE;
+    }
+}
 
 /*
 * Checks if there are files in the dropbox_file table that aren't used anymore in dropbox_person table.
@@ -285,9 +244,9 @@ function removeMoreIfMailing($fileId)
 	    $mailingPseudoId = $res['recipientId'];
 	    if ($mailingPseudoId > $dropbox_cnf["mailingIdBase"])
 	    {
-	        $sql = "DELETE FROM `" . $dropbox_cnf["personTbl"] . "` WHERE personId='" . intval($mailingPseudoId) . "'";
+	        $sql = "DELETE FROM `" . $dropbox_cnf["personTbl"] . "` WHERE personId='" . $mailingPseudoId . "'";
 	        $result1 = db_query($sql, $currentCourseID);
-            }
+        }
     }
 }
 ?>
