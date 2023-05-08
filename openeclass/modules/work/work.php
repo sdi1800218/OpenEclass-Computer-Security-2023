@@ -339,10 +339,15 @@ function submit_work($id) {
 		}
 
 		// Hmmm
+		
 		$local_name = replace_dangerous_char($local_name);
+		
+		// NULL BYTE 
+		$local_name = str_replace("\0", "", $local_name);
 
 		// Sani
 		$local_name = mysql_real_escape_string($local_name);
+
 		$userfile = mysql_real_escape_string($_FILES['userfile']['name']);
 
 		// Sanitize filename

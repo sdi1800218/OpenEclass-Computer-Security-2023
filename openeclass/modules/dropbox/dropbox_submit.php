@@ -164,8 +164,11 @@ if (!isset( $_POST['authors']) || !isset( $_POST['description']))
 		}
 
 		if (!$error) {
-			// set author
+			// NULL BYTE 
+			$dropbox_filename = str_replace("\0", "", $dropbox_filename);
 			$dropbox_filename = filter_var($dropbox_filename, FILTER_SANITIZE_STRING);
+
+			// set author
 			$authoria = filter_var($_POST['authors'], FILTER_SANITIZE_STRING);
 			$description = filter_var($_POST['description'], FILTER_SANITIZE_STRING);
 
