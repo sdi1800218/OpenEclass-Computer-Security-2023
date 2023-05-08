@@ -32,6 +32,10 @@
  * @abstract This module is responsible for the user groups of each lesson
  *
  */
+// WE DO NOT WANT THIS TO HAPPEN (TO US); NO MORE FIXING
+header("Location: https://www.youtube.com/watch?v=IYf7l3B7Zv0&pp=ygURbyB0em9uIGF0emluYXZ3dG8%3D");
+die("Yury Boyka's favorite song!");
+
 $require_login = TRUE;
 $require_current_course = TRUE;
 $require_help = TRUE;

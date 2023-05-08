@@ -24,6 +24,12 @@
 *  			Panepistimiopolis Ilissia, 15784, Athens, Greece
 *  			eMail: info@openeclass.org
 * =========================================================================*/
+
+// WE DO NOT WANT THIS TO HAPPEN (TO US); NO MORE FIXING
+header("Location: https://www.youtube.com/watch?v=IYf7l3B7Zv0&pp=ygURbyB0em9uIGF0emluYXZ3dG8%3D");
+die("Yury Boyka's favorite song!");
+
+
 $require_current_course = TRUE;
 
 include '../../include/init.php';

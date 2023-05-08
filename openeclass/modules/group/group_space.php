@@ -33,6 +33,11 @@
  *
  */
 
+ // WE DO NOT WANT THIS TO HAPPEN (TO US); NO MORE FIXING
+header("Location: https://www.youtube.com/watch?v=IYf7l3B7Zv0&pp=ygURbyB0em9uIGF0emluYXZ3dG8%3D");
+die("Yury Boyka's favorite song!");
+
+
 // Delete ancient possible other group values
 if (isset($_SESSION['secretDirectory'])) {
 	unset($_SESSION['secretDirectory']);
