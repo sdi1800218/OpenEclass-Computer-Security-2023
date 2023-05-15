@@ -47,8 +47,15 @@ To site είναι διαθέσιμο στο http://localhost:8001/. Την πρ
 
 - 1115201800218, Pantazis Harry
 
-### Report
+## Shield
 
-Συμπληρώστε εδώ __ένα report__ που
-- Να εξηγεί τι είδους αλλαγές κάνατε στον κώδικα για να προστατέψετε το site σας (από την κάθε επίθεση).
-- Να εξηγεί τι είδους επιθέσεις δοκιμάσατε στο αντίπαλο site και αν αυτές πέτυχαν.
+- What didn't happen:
+  - CORS
+  - Different password hashing
+
+
+### References
+1. https://phptherightway.com/#security
+2. 
+
+## Sword
