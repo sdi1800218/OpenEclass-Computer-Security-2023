@@ -49,8 +49,8 @@ To site είναι διαθέσιμο στο http://localhost:8001/. Την πρ
 
 ## Shield
 
-The report on vulnerabilities found in the initial code and fixes provided can be found at [the Defense file](./DEFENCE.md).
+The report on vulnerabilities found in the application's code and fixes provided can be found at [the Defense writeup](./DEFENCE.md).
 
 ## Sword
 
-The report on attacks tested and found on the opponent team's site can be found at [the Attack file](./ATTACK.md).
+The report on attacks tested and found on the opponent team's site can be found at [the Attack writeup](./ATTACK.md).

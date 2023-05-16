@@ -1,6 +1,7 @@
 # Table of Contents
 <!-- TOC -->
 
+- [Table of Contents](#table-of-contents)
 - [Intro](#intro)
 - [SQL Injections](#sql-injections)
     - [Upgrade - /upgrade/index.php](#upgrade---upgradeindexphp)
