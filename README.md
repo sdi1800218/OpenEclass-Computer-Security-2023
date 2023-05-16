@@ -49,13 +49,8 @@ To site είναι διαθέσιμο στο http://localhost:8001/. Την πρ
 
 ## Shield
 
-- What didn't happen:
-  - CORS
-  - Different password hashing
-
-
-### References
-1. https://phptherightway.com/#security
-2. 
+The report on vulnerabilities found in the initial code and fixes provided can be found at [the Defense file](./DEFENCE.md).
 
 ## Sword
+
+The report on attacks tested and found on the opponent team's site can be found at [the Attack file](./ATTACK.md).
