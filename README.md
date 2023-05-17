@@ -43,7 +43,7 @@ To site είναι διαθέσιμο στο http://localhost:8001/. Την πρ
 Εκφώνηση: https://ys13.chatzi.org/assets/projects/project1.pdf
 
 
-### Μέλη ομάδας
+## Μέλη ομάδας
 
 - 1115201800218, Pantazis Harry
 
@@ -54,3 +54,17 @@ The report on vulnerabilities found in the application's code and fixes provided
 ## Sword
 
 The report on attacks tested and found on the opponent team's site can be found at [the Attack writeup](./ATTACK.md).
+
+
+# Extras
+
+## Tooling
+- `skipfish` (guest, user, admin), for web security auditing.
+- `burpsuite`, to intercept and play with HTTP requests.
+- `wapiti3`, as a second web app security auditor.
+- `sqlmap`, for weird query weaponization after initial identification.
+- `phpcs`, for static analyzing the codebase with the [phpcs security audit ruleset](https://github.com/FloeDesignTechnologies/phpcs-security-audit).
+
+## Resources
+1. [PHP the right way -- Security Chapter](https://phptherightway.com/#security)
+2. [PHP Documentation -- Security Section](https://www.php.net/manual/en/security.php)
