@@ -67,7 +67,7 @@ function db_query($sql, $db = FALSE) {
 
 
 // Check if a string looks like a valid email address
-function email_is_valid($email) {
+function email_seems_valid($email) {
     return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
 }
 
